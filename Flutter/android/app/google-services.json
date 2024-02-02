@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "875809051038",
+    "project_id": "ripple-cb017",
+    "storage_bucket": "ripple-cb017.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875809051038:android:d75ec9a249ab27872bc68f",
+        "android_client_info": {
+          "package_name": "com.example.family_game_night"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArOY5WiYy1TjRRnPwRpxGgytAR4MKU3Hs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

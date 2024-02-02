@@ -1,0 +1,89 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "gin_rummy_games",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lobbyCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "gameStatus",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "hearts_games",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lobbyCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "gameStatus",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "cheat_games",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lobbyCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "gameStatus",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "scum_games",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lobbyCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "gameStatus",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "lobbies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lobbyCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "gameType",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "messages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sentAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "authorId",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

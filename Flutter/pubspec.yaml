@@ -1,0 +1,82 @@
+name: ripple
+description: Ripple
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+version: 1.0.1+2
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_riverpod: ^2.3.4
+  riverpod_annotation: ^2.0.4
+  freezed_annotation: ^2.2.0
+  json_annotation: ^4.8.0
+  hooks_riverpod: ^2.3.4
+  flutter_hooks: ^0.20.3
+  carousel_slider: ^4.2.1
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.7.3
+  flutter_form_builder: ^9.1.0
+  form_builder_validators: ^9.0.0
+  go_router: ^12.0.0
+  flutter_animate: ^4.1.1+1
+  cloud_firestore: ^4.8.5
+  mutex: ^3.0.1
+  trotter: ^2.2.0
+  random_avatar: ^0.0.8
+  smooth_page_indicator: ^1.1.0
+  material_design_icons_flutter: ^7.0.7296
+  uuid: ^4.2.1
+  random_name_generator: ^1.2.0
+  url_launcher: ^6.2.1
+
+dev_dependencies:
+  test: ^1.24.3
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: "^0.13.0"
+  build_runner: ^2.3.3
+  riverpod_generator: ^2.1.6
+  custom_lint: ^0.5.6
+  riverpod_lint: ^2.1.1
+  flutter_lints: ^3.0.1
+  freezed: ^2.3.2
+  json_serializable: ^6.6.1
+  faker: ^2.1.0
+  mocktail: ^1.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - images/
+    - images/cards/
+    - images/1.5x/
+    - images/2.0x/
+    - images/3.0x/
+    - images/4.0x/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path_ios: "images/iosLogo.png"
+  image_path_android: "images/logo.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "images/logo.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "images/logo.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "images/logo.png"
