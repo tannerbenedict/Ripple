@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ripple/models/database_models/cheat_game_model.dart';
+import 'package:ripple/models/database_models/two_player_game_model.dart';
 import 'package:ripple/models/database_models/game_model.dart';
-import 'package:ripple/models/database_models/gin_rummy_game_model.dart';
-import 'package:ripple/models/database_models/hearts_game_model.dart';
 import 'package:ripple/models/database_models/lobby_model.dart';
-import 'package:ripple/models/database_models/scum_game_model.dart';
 import 'package:ripple/models/game_invite.dart';
 import 'package:ripple/models/user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -13,10 +10,7 @@ part 'database_provider.g.dart';
 
 class DatabaseRepository {
   static const String _userCollectionName = "users";
-  static const String _ginRummyCollectionName = "gin_rummy_games";
-  static const String _heartsCollectionName = "hearts_games";
-  static const String _cheatCollectionName = "cheat_games";
-  static const String _scumCollectionName = "scum_games";
+  static const String _twoPlayerCollectionName = "two_player_games";
   static const String _lobbyCollectionName = "lobbies";
   static const String _gameInviteCollectionName = "game_invites";
 
@@ -30,47 +24,20 @@ class DatabaseRepository {
   Future<void> updateUser(User user) async =>
       await _userCollection().doc(user.firebaseId).set(user);
 
-  Future<GinRummyGameModel?> getGinRummyGame(String lobbyCode) async =>
-      await _getGinDocRef(lobbyCode).get().then((value) => value.data());
-
-  Future<HeartsGameModel?> getHeartsGame(String lobbyCode) async =>
-      await _getHeartsDocRef(lobbyCode).get().then((value) => value.data());
-
-  Future<CheatGameModel?> getCheatGame(String lobbyCode) async =>
-      await _getCheatDocRef(lobbyCode).get().then((value) => value.data());
-
-  Future<ScumGameModel?> getScumGame(String lobbyCode) async =>
-      await _getScumDocRef(lobbyCode).get().then((value) => value.data());
+  Future<TwoPlayerGameModel?> getTwoPlayerGame(String lobbyCode) async =>
+      await _getTwoPlayerDocRef(lobbyCode).get().then((value) => value.data());
 
   Future<LobbyModel?> getLobby(String lobbyCode) async =>
       await _getLobbyDocRef(lobbyCode).get().then((value) => value.data());
 
-  Future<void> updateGinRummyGame(GinRummyGameModel model) async =>
-      await _getGinDocRef(model.lobbyCode).set(model);
+  Future<void> updateTwoPlayerGame(TwoPlayerGameModel model) async =>
+      await _getTwoPlayerDocRef(model.lobbyCode).set(model);
 
-  Future<GinRummyGameModel> updateGinRummyLobby(
+  Future<TwoPlayerGameModel> updateTwoPlayerLobby(
       String lobbyCode, User user, UpdateType update) async {
     await updateLobbyAtomically(
-        _ginRummyCollectionName, lobbyCode, update, user);
-    return (await _getGinDocRef(lobbyCode).get()).data()!;
-  }
-
-  Future<HeartsGameModel> updateHeartsLobby(
-      String lobbyCode, User user, UpdateType update) async {
-    await updateLobbyAtomically(_heartsCollectionName, lobbyCode, update, user);
-    return (await _getHeartsDocRef(lobbyCode).get()).data()!;
-  }
-
-  Future<ScumGameModel> updateScumLobby(
-      String lobbyCode, User user, UpdateType update) async {
-    await updateLobbyAtomically(_scumCollectionName, lobbyCode, update, user);
-    return (await _getScumDocRef(lobbyCode).get()).data()!;
-  }
-
-  Future<CheatGameModel> updateCheatLobby(
-      String lobbyCode, User user, UpdateType update) async {
-    await updateLobbyAtomically(_cheatCollectionName, lobbyCode, update, user);
-    return (await _getCheatDocRef(lobbyCode).get()).data()!;
+        _twoPlayerCollectionName, lobbyCode, update, user);
+    return (await _getTwoPlayerDocRef(lobbyCode).get()).data()!;
   }
 
   Future<void> updateLobbyAtomically(String collectionName, String lobbyCode,
@@ -109,21 +76,6 @@ class DatabaseRepository {
     }
   }
 
-  Future<void> updateHeartsGame(HeartsGameModel model) async =>
-      _db.runTransaction((transaction) async {
-        transaction.set(_getHeartsDocRef(model.lobbyCode), model);
-      });
-
-  Future<void> updateCheatGame(CheatGameModel model) async =>
-      _db.runTransaction((transaction) async {
-        transaction.set(_getCheatDocRef(model.lobbyCode), model);
-      });
-
-  Future<void> updateScumGame(ScumGameModel model) async =>
-      _db.runTransaction((transaction) async {
-        transaction.set(_getScumDocRef(model.lobbyCode), model);
-      });
-
   Future<void> updateLobby(LobbyModel model) async =>
       _db.runTransaction((transaction) async {
         transaction.set(_getLobbyDocRef(model.lobbyCode), model);
@@ -134,17 +86,8 @@ class DatabaseRepository {
           .doc(invite.inviteId)
           .set(invite);
 
-  Stream<GinRummyGameModel?> watchGinRummyGame(String lobbyCode) =>
-      _getGinDocRef(lobbyCode).snapshots().map((event) => event.data());
-
-  Stream<HeartsGameModel?> watchHeartsGame(String lobbyCode) =>
-      _getHeartsDocRef(lobbyCode).snapshots().map((element) => element.data());
-
-  Stream<CheatGameModel?> watchCheatGame(String lobbyCode) =>
-      _getCheatDocRef(lobbyCode).snapshots().map((element) => element.data());
-
-  Stream<ScumGameModel?> watchScumGame(String lobbyCode) =>
-      _getScumDocRef(lobbyCode).snapshots().map((element) => element.data());
+  Stream<TwoPlayerGameModel?> watchTwoPlayerGame(String lobbyCode) =>
+      _getTwoPlayerDocRef(lobbyCode).snapshots().map((event) => event.data());
 
   Stream<LobbyModel?> watchLobby(String lobbyCode) =>
       _getLobbyDocRef(lobbyCode).snapshots().map((element) => element.data());
@@ -193,27 +136,6 @@ class DatabaseRepository {
                   GameInvite.fromJson(snapshot.data()!),
               toFirestore: (invite, _) => invite!.toJson());
 
-  DocumentReference<HeartsGameModel> _getHeartsDocRef(String lobbyCode) =>
-      _db.collection(_heartsCollectionName).doc(lobbyCode).withConverter(
-            fromFirestore: (snapshot, options) =>
-                HeartsGameModel.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          );
-
-  DocumentReference<CheatGameModel> _getCheatDocRef(String lobbyCode) =>
-      _db.collection(_cheatCollectionName).doc(lobbyCode).withConverter(
-            fromFirestore: (snapshot, options) =>
-                CheatGameModel.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          );
-
-  DocumentReference<ScumGameModel> _getScumDocRef(String lobbyCode) =>
-      _db.collection(_scumCollectionName).doc(lobbyCode).withConverter(
-            fromFirestore: (snapshot, options) =>
-                ScumGameModel.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          );
-
   DocumentReference<LobbyModel> _getLobbyDocRef(String lobbyCode) =>
       _db.collection(_lobbyCollectionName).doc(lobbyCode).withConverter(
             fromFirestore: (snapshot, options) =>
@@ -221,61 +143,22 @@ class DatabaseRepository {
             toFirestore: (value, options) => value.toJson(),
           );
 
-  DocumentReference<GinRummyGameModel> _getGinDocRef(String lobbyCode) =>
-      _db.collection(_ginRummyCollectionName).doc(lobbyCode).withConverter(
+  DocumentReference<TwoPlayerGameModel> _getTwoPlayerDocRef(String lobbyCode) =>
+      _db.collection(_twoPlayerCollectionName).doc(lobbyCode).withConverter(
             fromFirestore: (snapshot, options) =>
-                GinRummyGameModel.fromJson(snapshot.data()!),
+                TwoPlayerGameModel.fromJson(snapshot.data()!),
             toFirestore: (value, options) => value.toJson(),
           );
 
-  Future<void> winSolitare(User user, int moves) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "coins": FieldValue.increment(1),
-      "gamesPlayed": FieldValue.increment(1),
-      "gamesWon": FieldValue.increment(1),
-      "solitaireGamesPlayed": FieldValue.increment(1),
-      "solitaireGamesWon": FieldValue.increment(1),
-      "solitaireBestMoves": moves
-    });
-  }
+  
 
-  Future<void> winGin(User user) async {
+  Future<void> winTwoPlayer(User user) async {
     await _userCollection().doc(user.firebaseId).update({
       "coins": FieldValue.increment(1),
       "gamesPlayed": FieldValue.increment(1),
       "gamesWon": FieldValue.increment(1),
-      "ginRummyGamesPlayed": FieldValue.increment(1),
-      "ginRummyGamesWon": FieldValue.increment(1),
-    });
-  }
-
-  Future<void> winHearts(User user) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "coins": FieldValue.increment(1),
-      "gamesPlayed": FieldValue.increment(1),
-      "gamesWon": FieldValue.increment(1),
-      "heartsGamesPlayed": FieldValue.increment(1),
-      "heartsGamesWon": FieldValue.increment(1),
-    });
-  }
-
-  Future<void> winScum(User user) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "coins": FieldValue.increment(1),
-      "gamesPlayed": FieldValue.increment(1),
-      "gamesWon": FieldValue.increment(1),
-      "scumGamesPlayed": FieldValue.increment(1),
-      "scumGamesWon": FieldValue.increment(1),
-    });
-  }
-
-  Future<void> winCheat(User user) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "coins": FieldValue.increment(1),
-      "gamesPlayed": FieldValue.increment(1),
-      "gamesWon": FieldValue.increment(1),
-      "cheatGamesPlayed": FieldValue.increment(1),
-      "cheatGamesWon": FieldValue.increment(1),
+      "twoPlayerGamesPlayed": FieldValue.increment(1),
+      "twoPlayerGamesWon": FieldValue.increment(1),
     });
   }
 
@@ -293,38 +176,11 @@ class DatabaseRepository {
     });
   }
 
-  Future<void> loseSolitaire(User user) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "gamesPlayed": FieldValue.increment(1),
-      "solitaireGamesPlayed": FieldValue.increment(1),
-    });
-  }
 
-  Future<void> loseGin(User user) async {
+  Future<void> loseTwoPlayer(User user) async {
     await _userCollection().doc(user.firebaseId).update({
       "gamesPlayed": FieldValue.increment(1),
-      "ginGamesPlayed": FieldValue.increment(1),
-    });
-  }
-
-  Future<void> loseHearts(User user) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "gamesPlayed": FieldValue.increment(1),
-      "heartsGamesPlayed": FieldValue.increment(1),
-    });
-  }
-
-  Future<void> loseScum(User user) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "gamesPlayed": FieldValue.increment(1),
-      "scumGamesPlayed": FieldValue.increment(1),
-    });
-  }
-
-  Future<void> loseCheat(User user) async {
-    await _userCollection().doc(user.firebaseId).update({
-      "gamesPlayed": FieldValue.increment(1),
-      "cheatGamesPlayed": FieldValue.increment(1),
+      "TwoPlayerGamesPlayed": FieldValue.increment(1),
     });
   }
 

@@ -22,12 +22,8 @@ class Statistics extends ConsumerWidget {
           coins = user.coins;
           gp = user.gamesPlayed;
           gw = user.gamesWon;
-          twogp = user.solitaireGamesPlayed;
-          twogw = user.solitaireGamesWon;
-          threegp = user.ginRummyGamesPlayed;
-          threegw = user.ginRummyGamesWon;
-          fourgp = user.heartsGamesPlayed;
-          fourgw = user.heartsGamesWon;
+          twogp = user.twoPlayerGamesPlayed;
+          twogw = user.twoPlayerGamesWon;
           return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -38,7 +34,7 @@ class Statistics extends ConsumerWidget {
                     fit: BoxFit.cover),
               ),
               child: DefaultTabController(
-                length: 4,
+                length: 2,
                 child: Scaffold(
                   backgroundColor: Colors.transparent,
                   appBar: AppBar(
@@ -48,8 +44,6 @@ class Statistics extends ConsumerWidget {
                         tabs: [
                           Tab(text: "General"),
                           Tab(text: "Two Player"),
-                          Tab(text: "Three Player"),
-                          Tab(text: "Four Player"),
                         ],
                       )),
                   body: SafeArea(
@@ -144,92 +138,6 @@ class Statistics extends ConsumerWidget {
                                         ),
                                         subtitle: Text(
                                           twogp == 0 ? "N/A" : "${(twogw * 100) ~/ twogp}%",
-                                          style: theme.textTheme.headlineSmall,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                    ]),
-                                  ),
-                                  SingleChildScrollView(
-                                    child: Column(children: [
-                                      Card(
-                                          child: ListTile(
-                                        title: Text(
-                                          "Games Played",
-                                          style: theme.textTheme.headlineMedium,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        subtitle: Text(
-                                          threegp.toString(),
-                                          style: theme.textTheme.headlineSmall,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                      Card(
-                                          child: ListTile(
-                                        title: Text(
-                                          "Games Won",
-                                          style: theme.textTheme.headlineMedium,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        subtitle: Text(
-                                          threegw.toString(),
-                                          style: theme.textTheme.headlineSmall,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                      Card(
-                                          child: ListTile(
-                                        title: Text(
-                                          "Win Percentage",
-                                          style: theme.textTheme.headlineMedium,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        subtitle: Text(
-                                          threegp == 0 ? "N/A" : "${(threegw * 100) ~/ threegp}%",
-                                          style: theme.textTheme.headlineSmall,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                    ]),
-                                  ),
-                                  SingleChildScrollView(
-                                    child: Column(children: [
-                                      Card(
-                                          child: ListTile(
-                                        title: Text(
-                                          "Games Played",
-                                          style: theme.textTheme.headlineMedium,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        subtitle: Text(
-                                          fourgp.toString(),
-                                          style: theme.textTheme.headlineSmall,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                      Card(
-                                          child: ListTile(
-                                        title: Text(
-                                          "Games Won",
-                                          style: theme.textTheme.headlineMedium,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        subtitle: Text(
-                                          fourgw.toString(),
-                                          style: theme.textTheme.headlineSmall,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                      Card(
-                                          child: ListTile(
-                                        title: Text(
-                                          "Win Percentage",
-                                          style: theme.textTheme.headlineMedium,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        subtitle: Text(
-                                          fourgp == 0 ? "N/A" : "${(fourgw * 100) ~/ fourgp}%",
                                           style: theme.textTheme.headlineSmall,
                                           textAlign: TextAlign.center,
                                         ),

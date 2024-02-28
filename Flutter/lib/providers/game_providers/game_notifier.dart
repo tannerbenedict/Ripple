@@ -1,10 +1,8 @@
 import 'dart:math';
 
 import 'package:ripple/models/database_models/game_model.dart';
-import 'package:ripple/providers/game_providers/cheat_notifier_online.dart';
-import 'package:ripple/providers/game_providers/gin_rummy_notifier_online.dart';
-import 'package:ripple/providers/game_providers/hearts_notifier_online.dart';
-import 'package:ripple/providers/game_providers/scum_notifier_online.dart';
+import 'package:ripple/providers/game_providers/two_player_notifier_online.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class UserRequiredError extends Error {
@@ -65,16 +63,8 @@ typedef GameNotifierProvider<T extends GameNotifier<GameModel?>>
 extension GameTypeNotiferProvider on GameType {
   GameNotifierProvider get provider {
     switch (this) {
-      case GameType.solitaire:
-        throw ArgumentError("Solitaire is not a multiplayer game.");
-      case GameType.ginRummy:
-        return ginRummyNotifierOnlineProvider.call;
-      case GameType.hearts:
-        return heartsOnlineNotifierProvider.call;
-      case GameType.scum:
-        return scumOnlineNotifierProvider.call;
-      case GameType.cheat:
-        return cheatOnlineNotifierProvider.call;
+      case GameType.twoPlayer:
+        return twoPlayerNotifierOnlineProvider.call;
     }
   }
 }

@@ -9,21 +9,12 @@ part of 'card.dart';
 _$CardImpl _$$CardImplFromJson(Map<String, dynamic> json) => _$CardImpl(
       id: json['id'] as String,
       faceValue: json['faceValue'] as int,
-      suit: $enumDecode(_$SuitEnumMap, json['suit']),
+      isFlipped: json['isFlipped'] as bool,
     );
 
 Map<String, dynamic> _$$CardImplToJson(_$CardImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'faceValue': instance.faceValue,
-      'suit': _$SuitEnumMap[instance.suit]!,
+      'isFlipped': instance.isFlipped,
     };
-
-const _$SuitEnumMap = {
-  Suit.hearts: 'hearts',
-  Suit.diamonds: 'diamonds',
-  Suit.spades: 'spades',
-  Suit.clubs: 'clubs',
-  Suit.redJoker: 'redJoker',
-  Suit.blackJoker: 'blackJoker',
-};

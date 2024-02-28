@@ -14,16 +14,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 extension GameTypeImage on GameType {
   String get image {
     switch (this) {
-      case GameType.solitaire:
-        return 'images/new_solitaire.png';
-      case GameType.ginRummy:
-        return 'images/new_ginRummy.png';
-      case GameType.hearts:
-        return 'images/new_hearts.png';
-      case GameType.scum:
-        return 'images/new_scum.png';
-      case GameType.cheat:
-        return 'images/new_cheat.png';
+      case GameType.twoPlayer:
+        return 'images/tanner.png';
     }
   }
 }
@@ -31,7 +23,7 @@ extension GameTypeImage on GameType {
 extension GameTypeOnMode on Iterable<GameType> {
   List<GameType> get soloGames => GameType.values;
   List<GameType> get onlineGames => GameType.values
-      .where((element) => element != GameType.solitaire)
+      .where((element) => element != GameType.twoPlayer)
       .toList();
 }
 

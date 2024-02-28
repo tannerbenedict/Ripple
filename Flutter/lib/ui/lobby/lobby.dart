@@ -4,7 +4,7 @@ import 'package:ripple/providers/game_providers/game_notifier.dart';
 import 'package:ripple/providers/lobby_provider.dart';
 import 'package:ripple/providers/login_info_provider.dart';
 import 'package:ripple/ui/chat/chat_room.dart';
-import 'package:ripple/ui/games/hearts/player_avatar.dart';
+import 'package:ripple/ui/games/player_avatar.dart';
 import 'package:ripple/ui/lobby/ok_dialog.dart';
 import 'package:ripple/ui/profile/friends/friend_invite_list.dart';
 import 'package:flutter/material.dart';

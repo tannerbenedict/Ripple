@@ -36,9 +36,5 @@ const _$InviteStatusEnumMap = {
 };
 
 const _$GameTypeEnumMap = {
-  GameType.solitaire: 'solitaire',
-  GameType.ginRummy: 'ginRummy',
-  GameType.hearts: 'hearts',
-  GameType.scum: 'scum',
-  GameType.cheat: 'cheat',
+  GameType.twoPlayer: 'twoPlayer',
 };

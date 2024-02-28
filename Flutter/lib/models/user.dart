@@ -25,17 +25,8 @@ class User with _$User {
     required String selectedCardBack,
     required int gamesPlayed,
     required int gamesWon,
-    required int solitaireGamesPlayed,
-    required int solitaireGamesWon,
-    required int ginRummyGamesPlayed,
-    required int ginRummyGamesWon,
-    required int heartsGamesPlayed,
-    required int heartsGamesWon,
-    required int scumGamesPlayed,
-    required int scumGamesWon,
-    required int cheatGamesPlayed,
-    required int cheatGamesWon,
-    required int solitaireBestMoves,
+    required int twoPlayerGamesPlayed,
+    required int twoPlayerGamesWon,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -51,17 +42,8 @@ class User with _$User {
         selectedCardBack: cardBack,
         gamesPlayed: gp,
         gamesWon: gw,
-        solitaireGamesPlayed: twogp,
-        solitaireGamesWon: twogw,
-        ginRummyGamesPlayed: threegp,
-        ginRummyGamesWon: threegw,
-        heartsGamesPlayed: fourgp,
-        heartsGamesWon: fourgw,
-        scumGamesPlayed: 0,
-        scumGamesWon: 0,
-        cheatGamesPlayed: 0,
-        cheatGamesWon: 0,
-        solitaireBestMoves: 0);
+        twoPlayerGamesPlayed: twogp,
+        twoPlayerGamesWon: twogw,);
   }
 
   factory User.defaultPlayer() {
@@ -75,17 +57,8 @@ class User with _$User {
         selectedCardBack: "",
         gamesPlayed: 0,
         gamesWon: 0,
-        solitaireGamesPlayed: 0,
-        solitaireGamesWon: 0,
-        ginRummyGamesPlayed: 0,
-        ginRummyGamesWon: 0,
-        heartsGamesPlayed: 0,
-        heartsGamesWon: 0,
-        scumGamesPlayed: 0,
-        scumGamesWon: 0,
-        cheatGamesPlayed: 0,
-        cheatGamesWon: 0,
-        solitaireBestMoves: 0);
+        twoPlayerGamesPlayed: 0,
+        twoPlayerGamesWon: 0,);
   }
 
   factory User.getRealOrDefaultUser(firebase_auth.User? user) {
@@ -113,17 +86,8 @@ class User with _$User {
         selectedCardBack: "",
         gamesPlayed: 0,
         gamesWon: 0,
-        solitaireGamesPlayed: 0,
-        solitaireGamesWon: 0,
-        ginRummyGamesPlayed: 0,
-        ginRummyGamesWon: 0,
-        heartsGamesPlayed: 0,
-        heartsGamesWon: 0,
-        scumGamesPlayed: 0,
-        scumGamesWon: 0,
-        cheatGamesPlayed: 0,
-        cheatGamesWon: 0,
-        solitaireBestMoves: 0);
+        twoPlayerGamesPlayed: 0,
+        twoPlayerGamesWon: 0,);
   }
 
   bool get isBot => firebaseId.contains("bot");

@@ -1,14 +1,8 @@
 import 'package:ripple/models/database_models/game_model.dart';
-import 'package:ripple/providers/game_providers/cheat_notifier_online.dart';
-import 'package:ripple/providers/game_providers/cheat_notifier_solo.dart';
 import 'package:ripple/providers/game_providers/game_notifier.dart';
-import 'package:ripple/providers/game_providers/gin_rummy_notifier_online.dart';
-import 'package:ripple/providers/game_providers/gin_rummy_notifier_solo.dart';
-import 'package:ripple/ui/games/cheat/cheat.dart';
-import 'package:ripple/ui/games/gin_rummy/gin_rummy.dart';
-import 'package:ripple/ui/games/hearts/hearts.dart';
-import 'package:ripple/ui/games/scum/scum.dart';
-import 'package:ripple/ui/games/solitaire/solitaire.dart';
+import 'package:ripple/providers/game_providers/two_player_notifier_online.dart';
+import 'package:ripple/providers/game_providers/two_player_notifier_solo.dart';
+import 'package:ripple/ui/games/two_player/two_player_ripple.dart';
 import 'package:ripple/ui/home/home_page.dart';
 
 import 'package:ripple/ui/lobby/join_game.dart';
@@ -30,12 +24,7 @@ extension GameTypeRoutes on GameType {
 
   String get onlinePath {
     final baseRoute = onlineRouteName;
-    switch (this) {
-      case GameType.solitaire:
-        throw ArgumentError("Solitaire is not a multiplayer game");
-      default:
-        return "$baseRoute/:lobbyCode";
-    }
+    return "$baseRoute/:lobbyCode";
   }
 
   String get soloRouteName => "solo/$name";
@@ -69,78 +58,22 @@ final router = GoRouter(routes: [
             )
           ]),
       GoRoute(
-        name: GameType.cheat.soloRouteName,
-        path: GameType.cheat.soloPath,
-        builder: (context, state) => Cheat(
+        name: GameType.twoPlayer.soloRouteName,
+        path: GameType.twoPlayer.soloPath,
+        builder: (context, state) => TwoPlayer(
           lobbyCode: generateLobbyCode(),
-          cheatProvider: cheatSoloNotifierProvider.call,
+          provider: twoPlayerSoloNotifierProvider.call,
           gameMode: GameMode.solo,
         ),
       ),
       GoRoute(
-        name: GameType.scum.soloRouteName,
-        path: GameType.scum.soloPath,
-        builder: (context, state) => const Scum(lobbyCode: ""),
-      ),
-      GoRoute(
-        name: GameType.hearts.soloRouteName,
-        path: GameType.hearts.soloPath,
-        builder: (context, state) => const Hearts(lobbyCode: ""),
-      ),
-      GoRoute(
-        name: GameType.ginRummy.soloRouteName,
-        path: GameType.ginRummy.soloPath,
-        builder: (context, state) => GinRummy(
-          lobbyCode: generateLobbyCode(),
-          provider: ginRummySoloNotifierProvider.call,
-          gameMode: GameMode.solo,
-        ),
-      ),
-      GoRoute(
-        name: GameType.ginRummy.onlineRouteName,
-        path: GameType.ginRummy.onlinePath,
-        builder: (context, state) => GinRummy(
+        name: GameType.twoPlayer.onlineRouteName,
+        path: GameType.twoPlayer.onlinePath,
+        builder: (context, state) => TwoPlayer(
           lobbyCode: state.pathParameters["lobbyCode"]!,
-          provider: ginRummyNotifierOnlineProvider.call,
+          provider: twoPlayerNotifierOnlineProvider.call,
           gameMode: GameMode.online,
         ),
-      ),
-      GoRoute(
-        name: GameType.scum.onlineRouteName,
-        path: GameType.scum.onlinePath,
-        builder: (context, state) => Scum(
-          lobbyCode: state.pathParameters["lobbyCode"]!,
-        ),
-      ),
-      GoRoute(
-        name: GameType.hearts.onlineRouteName,
-        path: GameType.hearts.onlinePath,
-        builder: (context, state) =>
-            Hearts(lobbyCode: state.pathParameters["lobbyCode"]!),
-      ),
-      GoRoute(
-        name: GameType.cheat.onlineRouteName,
-        path: GameType.cheat.onlinePath,
-        builder: (context, state) => Cheat(
-          lobbyCode: state.pathParameters["lobbyCode"]!,
-          cheatProvider: cheatOnlineNotifierProvider.call,
-          gameMode: GameMode.online,
-        ),
-      ),
-      //GoRoute(
-      // name: GameType.hearts.soloRouteName,
-      //  path: GameType.hearts.soloPath,
-      // builder: (context, state) => const HeartsSolo(),
-      //),
-      // GoRoute(
-      //   name: GameType.scum.soloRouteName,
-      //   path: GameType.scum.soloPath,
-      //   builder: (context, state) => const ScumSolo(),
-      // ),
-      GoRoute(
-        name: GameType.solitaire.soloRouteName,
-        path: GameType.solitaire.soloPath,
-        builder: (context, state) => const Solitaire(),
       ),
       GoRoute(
         name: SelectGame.soloRouteName,

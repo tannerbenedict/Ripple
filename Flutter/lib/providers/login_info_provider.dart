@@ -54,16 +54,7 @@ class LoginInfo extends _$LoginInfo {
             selectedCardBack: "images/cardBack.png",
             gamesPlayed: 0,
             gamesWon: 0,
-            solitaireGamesPlayed: 0,
-            solitaireGamesWon: 0,
-            ginRummyGamesPlayed: 0,
-            ginRummyGamesWon: 0,
-            heartsGamesPlayed: 0,
-            heartsGamesWon: 0,
-            scumGamesPlayed: 0,
-            scumGamesWon: 0,
-            cheatGamesPlayed: 0,
-            cheatGamesWon: 0,
-            solitaireBestMoves: 0));
+            twoPlayerGamesPlayed: 0,
+            twoPlayerGamesWon: 0,));
   }
 }

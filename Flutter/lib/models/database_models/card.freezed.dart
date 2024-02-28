@@ -22,7 +22,7 @@ Card _$CardFromJson(Map<String, dynamic> json) {
 mixin _$Card {
   String get id => throw _privateConstructorUsedError;
   int get faceValue => throw _privateConstructorUsedError;
-  Suit get suit => throw _privateConstructorUsedError;
+  bool get isFlipped => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +34,7 @@ abstract class $CardCopyWith<$Res> {
   factory $CardCopyWith(Card value, $Res Function(Card) then) =
       _$CardCopyWithImpl<$Res, Card>;
   @useResult
-  $Res call({String id, int faceValue, Suit suit});
+  $Res call({String id, int faceValue, bool isFlipped});
 }
 
 /// @nodoc
@@ -52,7 +52,7 @@ class _$CardCopyWithImpl<$Res, $Val extends Card>
   $Res call({
     Object? id = null,
     Object? faceValue = null,
-    Object? suit = null,
+    Object? isFlipped = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -63,10 +63,10 @@ class _$CardCopyWithImpl<$Res, $Val extends Card>
           ? _value.faceValue
           : faceValue // ignore: cast_nullable_to_non_nullable
               as int,
-      suit: null == suit
-          ? _value.suit
-          : suit // ignore: cast_nullable_to_non_nullable
-              as Suit,
+      isFlipped: null == isFlipped
+          ? _value.isFlipped
+          : isFlipped // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -78,7 +78,7 @@ abstract class _$$CardImplCopyWith<$Res> implements $CardCopyWith<$Res> {
       __$$CardImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, int faceValue, Suit suit});
+  $Res call({String id, int faceValue, bool isFlipped});
 }
 
 /// @nodoc
@@ -93,7 +93,7 @@ class __$$CardImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? faceValue = null,
-    Object? suit = null,
+    Object? isFlipped = null,
   }) {
     return _then(_$CardImpl(
       id: null == id
@@ -104,10 +104,10 @@ class __$$CardImplCopyWithImpl<$Res>
           ? _value.faceValue
           : faceValue // ignore: cast_nullable_to_non_nullable
               as int,
-      suit: null == suit
-          ? _value.suit
-          : suit // ignore: cast_nullable_to_non_nullable
-              as Suit,
+      isFlipped: null == isFlipped
+          ? _value.isFlipped
+          : isFlipped // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -115,7 +115,8 @@ class __$$CardImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$CardImpl extends _Card {
-  _$CardImpl({required this.id, required this.faceValue, required this.suit})
+  _$CardImpl(
+      {required this.id, required this.faceValue, required this.isFlipped})
       : super._();
 
   factory _$CardImpl.fromJson(Map<String, dynamic> json) =>
@@ -126,7 +127,7 @@ class _$CardImpl extends _Card {
   @override
   final int faceValue;
   @override
-  final Suit suit;
+  final bool isFlipped;
 
   @JsonKey(ignore: true)
   @override
@@ -146,7 +147,7 @@ abstract class _Card extends Card {
   factory _Card(
       {required final String id,
       required final int faceValue,
-      required final Suit suit}) = _$CardImpl;
+      required final bool isFlipped}) = _$CardImpl;
   _Card._() : super._();
 
   factory _Card.fromJson(Map<String, dynamic> json) = _$CardImpl.fromJson;
@@ -156,7 +157,7 @@ abstract class _Card extends Card {
   @override
   int get faceValue;
   @override
-  Suit get suit;
+  bool get isFlipped;
   @override
   @JsonKey(ignore: true)
   _$$CardImplCopyWith<_$CardImpl> get copyWith =>

@@ -1,6 +1,6 @@
 import 'package:ripple/globals.dart';
 import 'package:ripple/providers/database_provider.dart';
-import 'package:ripple/ui/games/hearts/player_avatar.dart';
+import 'package:ripple/ui/games/player_avatar.dart';
 import 'package:ripple/ui/profile/input_background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -67,12 +67,8 @@ class UserInfoPage extends HookConsumerWidget {
             purchased = user.cardBacks;
             gp = user.gamesPlayed;
             gw = user.gamesWon;
-            twogp = user.solitaireGamesPlayed;
-            twogw = user.solitaireGamesWon;
-            threegp = user.ginRummyGamesPlayed;
-            threegw = user.ginRummyGamesWon;
-            fourgp = user.heartsGamesPlayed;
-            fourgw = user.heartsGamesWon;
+            twogp = user.twoPlayerGamesPlayed;
+            twogw = user.twoPlayerGamesWon;
             return SizedBox(
               height: size.height,
               width: size.width / 2,

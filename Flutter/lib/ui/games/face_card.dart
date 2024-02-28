@@ -23,6 +23,6 @@ class FaceCard extends StatelessWidget {
                 handleOnPressed!(card!);
               }
             : null,
-        child: showCard && card != null ? card!.front : Card.back);
+        child: card!.visibility && card != null ? card!.front : Card.back);
   }
 }

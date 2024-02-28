@@ -25,11 +25,7 @@ Map<String, dynamic> _$$LobbyModelImplToJson(_$LobbyModelImpl instance) =>
     };
 
 const _$GameTypeEnumMap = {
-  GameType.solitaire: 'solitaire',
-  GameType.ginRummy: 'ginRummy',
-  GameType.hearts: 'hearts',
-  GameType.scum: 'scum',
-  GameType.cheat: 'cheat',
+  GameType.twoPlayer: 'twoPlayer',
 };
 
 const _$GameStatusEnumMap = {

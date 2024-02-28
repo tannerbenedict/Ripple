@@ -29,17 +29,8 @@ mixin _$User {
   String get selectedCardBack => throw _privateConstructorUsedError;
   int get gamesPlayed => throw _privateConstructorUsedError;
   int get gamesWon => throw _privateConstructorUsedError;
-  int get solitaireGamesPlayed => throw _privateConstructorUsedError;
-  int get solitaireGamesWon => throw _privateConstructorUsedError;
-  int get ginRummyGamesPlayed => throw _privateConstructorUsedError;
-  int get ginRummyGamesWon => throw _privateConstructorUsedError;
-  int get heartsGamesPlayed => throw _privateConstructorUsedError;
-  int get heartsGamesWon => throw _privateConstructorUsedError;
-  int get scumGamesPlayed => throw _privateConstructorUsedError;
-  int get scumGamesWon => throw _privateConstructorUsedError;
-  int get cheatGamesPlayed => throw _privateConstructorUsedError;
-  int get cheatGamesWon => throw _privateConstructorUsedError;
-  int get solitaireBestMoves => throw _privateConstructorUsedError;
+  int get twoPlayerGamesPlayed => throw _privateConstructorUsedError;
+  int get twoPlayerGamesWon => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -61,17 +52,8 @@ abstract class $UserCopyWith<$Res> {
       String selectedCardBack,
       int gamesPlayed,
       int gamesWon,
-      int solitaireGamesPlayed,
-      int solitaireGamesWon,
-      int ginRummyGamesPlayed,
-      int ginRummyGamesWon,
-      int heartsGamesPlayed,
-      int heartsGamesWon,
-      int scumGamesPlayed,
-      int scumGamesWon,
-      int cheatGamesPlayed,
-      int cheatGamesWon,
-      int solitaireBestMoves});
+      int twoPlayerGamesPlayed,
+      int twoPlayerGamesWon});
 }
 
 /// @nodoc
@@ -96,17 +78,8 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? selectedCardBack = null,
     Object? gamesPlayed = null,
     Object? gamesWon = null,
-    Object? solitaireGamesPlayed = null,
-    Object? solitaireGamesWon = null,
-    Object? ginRummyGamesPlayed = null,
-    Object? ginRummyGamesWon = null,
-    Object? heartsGamesPlayed = null,
-    Object? heartsGamesWon = null,
-    Object? scumGamesPlayed = null,
-    Object? scumGamesWon = null,
-    Object? cheatGamesPlayed = null,
-    Object? cheatGamesWon = null,
-    Object? solitaireBestMoves = null,
+    Object? twoPlayerGamesPlayed = null,
+    Object? twoPlayerGamesWon = null,
   }) {
     return _then(_value.copyWith(
       firebaseId: null == firebaseId
@@ -145,49 +118,13 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.gamesWon
           : gamesWon // ignore: cast_nullable_to_non_nullable
               as int,
-      solitaireGamesPlayed: null == solitaireGamesPlayed
-          ? _value.solitaireGamesPlayed
-          : solitaireGamesPlayed // ignore: cast_nullable_to_non_nullable
+      twoPlayerGamesPlayed: null == twoPlayerGamesPlayed
+          ? _value.twoPlayerGamesPlayed
+          : twoPlayerGamesPlayed // ignore: cast_nullable_to_non_nullable
               as int,
-      solitaireGamesWon: null == solitaireGamesWon
-          ? _value.solitaireGamesWon
-          : solitaireGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      ginRummyGamesPlayed: null == ginRummyGamesPlayed
-          ? _value.ginRummyGamesPlayed
-          : ginRummyGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      ginRummyGamesWon: null == ginRummyGamesWon
-          ? _value.ginRummyGamesWon
-          : ginRummyGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      heartsGamesPlayed: null == heartsGamesPlayed
-          ? _value.heartsGamesPlayed
-          : heartsGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      heartsGamesWon: null == heartsGamesWon
-          ? _value.heartsGamesWon
-          : heartsGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      scumGamesPlayed: null == scumGamesPlayed
-          ? _value.scumGamesPlayed
-          : scumGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      scumGamesWon: null == scumGamesWon
-          ? _value.scumGamesWon
-          : scumGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      cheatGamesPlayed: null == cheatGamesPlayed
-          ? _value.cheatGamesPlayed
-          : cheatGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      cheatGamesWon: null == cheatGamesWon
-          ? _value.cheatGamesWon
-          : cheatGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      solitaireBestMoves: null == solitaireBestMoves
-          ? _value.solitaireBestMoves
-          : solitaireBestMoves // ignore: cast_nullable_to_non_nullable
+      twoPlayerGamesWon: null == twoPlayerGamesWon
+          ? _value.twoPlayerGamesWon
+          : twoPlayerGamesWon // ignore: cast_nullable_to_non_nullable
               as int,
     ) as $Val);
   }
@@ -210,17 +147,8 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String selectedCardBack,
       int gamesPlayed,
       int gamesWon,
-      int solitaireGamesPlayed,
-      int solitaireGamesWon,
-      int ginRummyGamesPlayed,
-      int ginRummyGamesWon,
-      int heartsGamesPlayed,
-      int heartsGamesWon,
-      int scumGamesPlayed,
-      int scumGamesWon,
-      int cheatGamesPlayed,
-      int cheatGamesWon,
-      int solitaireBestMoves});
+      int twoPlayerGamesPlayed,
+      int twoPlayerGamesWon});
 }
 
 /// @nodoc
@@ -242,17 +170,8 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? selectedCardBack = null,
     Object? gamesPlayed = null,
     Object? gamesWon = null,
-    Object? solitaireGamesPlayed = null,
-    Object? solitaireGamesWon = null,
-    Object? ginRummyGamesPlayed = null,
-    Object? ginRummyGamesWon = null,
-    Object? heartsGamesPlayed = null,
-    Object? heartsGamesWon = null,
-    Object? scumGamesPlayed = null,
-    Object? scumGamesWon = null,
-    Object? cheatGamesPlayed = null,
-    Object? cheatGamesWon = null,
-    Object? solitaireBestMoves = null,
+    Object? twoPlayerGamesPlayed = null,
+    Object? twoPlayerGamesWon = null,
   }) {
     return _then(_$UserImpl(
       firebaseId: null == firebaseId
@@ -291,49 +210,13 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.gamesWon
           : gamesWon // ignore: cast_nullable_to_non_nullable
               as int,
-      solitaireGamesPlayed: null == solitaireGamesPlayed
-          ? _value.solitaireGamesPlayed
-          : solitaireGamesPlayed // ignore: cast_nullable_to_non_nullable
+      twoPlayerGamesPlayed: null == twoPlayerGamesPlayed
+          ? _value.twoPlayerGamesPlayed
+          : twoPlayerGamesPlayed // ignore: cast_nullable_to_non_nullable
               as int,
-      solitaireGamesWon: null == solitaireGamesWon
-          ? _value.solitaireGamesWon
-          : solitaireGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      ginRummyGamesPlayed: null == ginRummyGamesPlayed
-          ? _value.ginRummyGamesPlayed
-          : ginRummyGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      ginRummyGamesWon: null == ginRummyGamesWon
-          ? _value.ginRummyGamesWon
-          : ginRummyGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      heartsGamesPlayed: null == heartsGamesPlayed
-          ? _value.heartsGamesPlayed
-          : heartsGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      heartsGamesWon: null == heartsGamesWon
-          ? _value.heartsGamesWon
-          : heartsGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      scumGamesPlayed: null == scumGamesPlayed
-          ? _value.scumGamesPlayed
-          : scumGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      scumGamesWon: null == scumGamesWon
-          ? _value.scumGamesWon
-          : scumGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      cheatGamesPlayed: null == cheatGamesPlayed
-          ? _value.cheatGamesPlayed
-          : cheatGamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      cheatGamesWon: null == cheatGamesWon
-          ? _value.cheatGamesWon
-          : cheatGamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      solitaireBestMoves: null == solitaireBestMoves
-          ? _value.solitaireBestMoves
-          : solitaireBestMoves // ignore: cast_nullable_to_non_nullable
+      twoPlayerGamesWon: null == twoPlayerGamesWon
+          ? _value.twoPlayerGamesWon
+          : twoPlayerGamesWon // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }
@@ -352,17 +235,8 @@ class _$UserImpl extends _User {
       required this.selectedCardBack,
       required this.gamesPlayed,
       required this.gamesWon,
-      required this.solitaireGamesPlayed,
-      required this.solitaireGamesWon,
-      required this.ginRummyGamesPlayed,
-      required this.ginRummyGamesWon,
-      required this.heartsGamesPlayed,
-      required this.heartsGamesWon,
-      required this.scumGamesPlayed,
-      required this.scumGamesWon,
-      required this.cheatGamesPlayed,
-      required this.cheatGamesWon,
-      required this.solitaireBestMoves})
+      required this.twoPlayerGamesPlayed,
+      required this.twoPlayerGamesWon})
       : _cardBacks = cardBacks,
         super._();
 
@@ -394,31 +268,13 @@ class _$UserImpl extends _User {
   @override
   final int gamesWon;
   @override
-  final int solitaireGamesPlayed;
+  final int twoPlayerGamesPlayed;
   @override
-  final int solitaireGamesWon;
-  @override
-  final int ginRummyGamesPlayed;
-  @override
-  final int ginRummyGamesWon;
-  @override
-  final int heartsGamesPlayed;
-  @override
-  final int heartsGamesWon;
-  @override
-  final int scumGamesPlayed;
-  @override
-  final int scumGamesWon;
-  @override
-  final int cheatGamesPlayed;
-  @override
-  final int cheatGamesWon;
-  @override
-  final int solitaireBestMoves;
+  final int twoPlayerGamesWon;
 
   @override
   String toString() {
-    return 'User(firebaseId: $firebaseId, displayName: $displayName, email: $email, profileUrl: $profileUrl, coins: $coins, cardBacks: $cardBacks, selectedCardBack: $selectedCardBack, gamesPlayed: $gamesPlayed, gamesWon: $gamesWon, solitaireGamesPlayed: $solitaireGamesPlayed, solitaireGamesWon: $solitaireGamesWon, ginRummyGamesPlayed: $ginRummyGamesPlayed, ginRummyGamesWon: $ginRummyGamesWon, heartsGamesPlayed: $heartsGamesPlayed, heartsGamesWon: $heartsGamesWon, scumGamesPlayed: $scumGamesPlayed, scumGamesWon: $scumGamesWon, cheatGamesPlayed: $cheatGamesPlayed, cheatGamesWon: $cheatGamesWon, solitaireBestMoves: $solitaireBestMoves)';
+    return 'User(firebaseId: $firebaseId, displayName: $displayName, email: $email, profileUrl: $profileUrl, coins: $coins, cardBacks: $cardBacks, selectedCardBack: $selectedCardBack, gamesPlayed: $gamesPlayed, gamesWon: $gamesWon, twoPlayerGamesPlayed: $twoPlayerGamesPlayed, twoPlayerGamesWon: $twoPlayerGamesWon)';
   }
 
   @JsonKey(ignore: true)
@@ -446,17 +302,8 @@ abstract class _User extends User {
       required final String selectedCardBack,
       required final int gamesPlayed,
       required final int gamesWon,
-      required final int solitaireGamesPlayed,
-      required final int solitaireGamesWon,
-      required final int ginRummyGamesPlayed,
-      required final int ginRummyGamesWon,
-      required final int heartsGamesPlayed,
-      required final int heartsGamesWon,
-      required final int scumGamesPlayed,
-      required final int scumGamesWon,
-      required final int cheatGamesPlayed,
-      required final int cheatGamesWon,
-      required final int solitaireBestMoves}) = _$UserImpl;
+      required final int twoPlayerGamesPlayed,
+      required final int twoPlayerGamesWon}) = _$UserImpl;
   _User._() : super._();
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
@@ -480,27 +327,9 @@ abstract class _User extends User {
   @override
   int get gamesWon;
   @override
-  int get solitaireGamesPlayed;
+  int get twoPlayerGamesPlayed;
   @override
-  int get solitaireGamesWon;
-  @override
-  int get ginRummyGamesPlayed;
-  @override
-  int get ginRummyGamesWon;
-  @override
-  int get heartsGamesPlayed;
-  @override
-  int get heartsGamesWon;
-  @override
-  int get scumGamesPlayed;
-  @override
-  int get scumGamesWon;
-  @override
-  int get cheatGamesPlayed;
-  @override
-  int get cheatGamesWon;
-  @override
-  int get solitaireBestMoves;
+  int get twoPlayerGamesWon;
   @override
   @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>

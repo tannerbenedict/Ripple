@@ -7,39 +7,20 @@ import 'package:flutter/foundation.dart';
 typedef FirebaseID = String;
 
 enum GameType {
-  solitaire,
-  ginRummy,
-  hearts,
-  scum,
-  cheat;
+  twoPlayer,
+;
 
   String get screenName {
     switch (this) {
-      case GameType.solitaire:
-        return "Solitaire";
-      case GameType.ginRummy:
-        return "Gin Rummy";
-      case GameType.hearts:
-        return "Hearts";
-      case GameType.scum:
-        return "Scum";
-      case GameType.cheat:
-        return "Cheat";
+      case GameType.twoPlayer:
+        return "Two Player";
     }
   }
 
   int get requiredPlayerCount {
     switch (this) {
-      case GameType.solitaire:
+      case GameType.twoPlayer:
         return 1;
-      case GameType.ginRummy:
-        return 2;
-      case GameType.hearts:
-        return 4;
-      case GameType.scum:
-        return 6;
-      case GameType.cheat:
-        return 8;
     }
   }
 
@@ -94,13 +75,15 @@ abstract class GameModel {
   static List<Card> generateDeck({Random? rng}) {
     var allCards = <Card>[];
 
-    for (final suit in Suit.values) {
-      if (suit != Suit.redJoker && suit != Suit.blackJoker) {
-        for (int i = 1; i <= 13; i++) {
-          allCards.add(Card(faceValue: i, suit: suit));
-        }
+    for (int i = 0; i < 18; i++) {
+      allCards.add(Card(faceValue: 0, isFlipped: false));
+    }
+    for (int i = 1; i < 13; i++) {
+      for (int j = 0; j < 12; j++) {
+        allCards.add(Card(faceValue: i, isFlipped: false));
       }
     }
+
     allCards.shuffle(rng);
 
     return allCards;
