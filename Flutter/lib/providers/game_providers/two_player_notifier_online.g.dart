@@ -7,7 +7,7 @@ part of 'two_player_notifier_online.dart';
 // **************************************************************************
 
 String _$twoPlayerNotifierOnlineHash() =>
-    r'e3d5f5f13aa5514e01eb47b1bda7c43bc5139db1';
+    r'acd5ed99dbfc79ab94df753c56a0c2813015523d';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -1,6 +1,7 @@
 import 'package:ripple/models/user.dart';
 import 'package:ripple/providers/game_providers/two_player_notifier.dart';
 import 'package:ripple/providers/login_info_provider.dart';
+import 'package:ripple/ui/games/two_player/active_pile.dart';
 import 'package:ripple/ui/games/two_player/draw_pile.dart';
 import 'package:ripple/ui/games/two_player/discard_pile.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,11 @@ class CenterSection extends ConsumerWidget {
       children: [
         Flexible(
             child: DiscardPile(
+          lobbyCode,
+          provider,
+        )),
+        Flexible(
+            child: ActivePile(
           lobbyCode,
           provider,
         )),

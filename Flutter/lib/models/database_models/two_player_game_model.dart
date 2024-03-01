@@ -25,8 +25,12 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
     required User? currentPlayer,
     required bool isFirstTurn,
     required bool isSecondTurn,
+    required bool canRipple,
+    required bool firstPlay,
     required List<Card> drawPile,
     required List<Card> discardPile,
+    required List<Card> activePile,
+    required int cardsFlipped,
     required Map<FirebaseID, List<Card>> playerHands,
     required Card? drawnCard,
     required Map<FirebaseID, int> playerScores,
@@ -50,9 +54,13 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
         currentPlayer: null,
         isFirstTurn: true,
         isSecondTurn: false,
+        canRipple: true,
+        firstPlay: true,
         winner: null,
         drawPile: allCards,
         discardPile: [],
+        activePile: [],
+        cardsFlipped: 0,
         playerHands: Map.fromEntries([MapEntry(user.firebaseId, [])]),
         drawnCard: null,
         playerScores: Map.fromEntries([MapEntry(user.firebaseId, 0)]),
@@ -62,6 +70,7 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
         playersNotPlaying: [],
         host: user,
         roundWinner: null,
+        
         gameStatus: GameStatus.pending);
   }
 
@@ -135,6 +144,8 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
       playerHands: hands,
       players: players,
       discardPile: [],
+      activePile: [],
+      cardsFlipped: 0,
       gameStatus: GameStatus.playing,
       currentPlayer: firstPlayer,
       isFirstTurn: true,
@@ -168,6 +179,8 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
         playerHands: hands,
         players: players,
         discardPile: [],
+        activePile: [],
+        cardsFlipped: 0,
         gameStatus: GameStatus.playing,
         currentPlayer: players.first,
         isFirstTurn: true,
@@ -192,7 +205,7 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
 
   bool playerCanDiscard(User? player) =>
       _checkBasicConditions(player!) &&
-      playerHands[currentPlayer!.firebaseId]!.length == 11;
+      activePile.isNotEmpty;
 
   bool playerCanDrawDrawPile(User? player) =>
       _checkBasicConditions(player!) &&

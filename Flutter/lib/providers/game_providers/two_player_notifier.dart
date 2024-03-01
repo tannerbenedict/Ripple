@@ -12,6 +12,9 @@ abstract class TwoPlayerNotifier<T extends TwoPlayerGameModel?>
   Future<void> drawDiscardPile(User user);
   Future<void> drawDrawPile(User user);
   Future<void> discardCard(Card card, User user);
+  Future<void> flipCards(User user);
+  Future<void> userFlipCard(User user, int index);
+  Future<void> placeCard(Card card, User user, int index);
 }
 
 typedef TwoPlayerNotifierProvider<T extends TwoPlayerNotifier>

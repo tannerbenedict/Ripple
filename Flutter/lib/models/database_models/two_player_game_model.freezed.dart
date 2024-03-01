@@ -23,8 +23,12 @@ mixin _$TwoPlayerGameModel {
   User? get currentPlayer => throw _privateConstructorUsedError;
   bool get isFirstTurn => throw _privateConstructorUsedError;
   bool get isSecondTurn => throw _privateConstructorUsedError;
+  bool get canRipple => throw _privateConstructorUsedError;
+  bool get firstPlay => throw _privateConstructorUsedError;
   List<Card> get drawPile => throw _privateConstructorUsedError;
   List<Card> get discardPile => throw _privateConstructorUsedError;
+  List<Card> get activePile => throw _privateConstructorUsedError;
+  int get cardsFlipped => throw _privateConstructorUsedError;
   Map<String, List<Card>> get playerHands => throw _privateConstructorUsedError;
   Card? get drawnCard => throw _privateConstructorUsedError;
   Map<String, int> get playerScores => throw _privateConstructorUsedError;
@@ -53,8 +57,12 @@ abstract class $TwoPlayerGameModelCopyWith<$Res> {
       {User? currentPlayer,
       bool isFirstTurn,
       bool isSecondTurn,
+      bool canRipple,
+      bool firstPlay,
       List<Card> drawPile,
       List<Card> discardPile,
+      List<Card> activePile,
+      int cardsFlipped,
       Map<String, List<Card>> playerHands,
       Card? drawnCard,
       Map<String, int> playerScores,
@@ -90,8 +98,12 @@ class _$TwoPlayerGameModelCopyWithImpl<$Res, $Val extends TwoPlayerGameModel>
     Object? currentPlayer = freezed,
     Object? isFirstTurn = null,
     Object? isSecondTurn = null,
+    Object? canRipple = null,
+    Object? firstPlay = null,
     Object? drawPile = null,
     Object? discardPile = null,
+    Object? activePile = null,
+    Object? cardsFlipped = null,
     Object? playerHands = null,
     Object? drawnCard = freezed,
     Object? playerScores = null,
@@ -117,6 +129,14 @@ class _$TwoPlayerGameModelCopyWithImpl<$Res, $Val extends TwoPlayerGameModel>
           ? _value.isSecondTurn
           : isSecondTurn // ignore: cast_nullable_to_non_nullable
               as bool,
+      canRipple: null == canRipple
+          ? _value.canRipple
+          : canRipple // ignore: cast_nullable_to_non_nullable
+              as bool,
+      firstPlay: null == firstPlay
+          ? _value.firstPlay
+          : firstPlay // ignore: cast_nullable_to_non_nullable
+              as bool,
       drawPile: null == drawPile
           ? _value.drawPile
           : drawPile // ignore: cast_nullable_to_non_nullable
@@ -125,6 +145,14 @@ class _$TwoPlayerGameModelCopyWithImpl<$Res, $Val extends TwoPlayerGameModel>
           ? _value.discardPile
           : discardPile // ignore: cast_nullable_to_non_nullable
               as List<Card>,
+      activePile: null == activePile
+          ? _value.activePile
+          : activePile // ignore: cast_nullable_to_non_nullable
+              as List<Card>,
+      cardsFlipped: null == cardsFlipped
+          ? _value.cardsFlipped
+          : cardsFlipped // ignore: cast_nullable_to_non_nullable
+              as int,
       playerHands: null == playerHands
           ? _value.playerHands
           : playerHands // ignore: cast_nullable_to_non_nullable
@@ -241,8 +269,12 @@ abstract class _$$TwoPlayerGameStateImplCopyWith<$Res>
       {User? currentPlayer,
       bool isFirstTurn,
       bool isSecondTurn,
+      bool canRipple,
+      bool firstPlay,
       List<Card> drawPile,
       List<Card> discardPile,
+      List<Card> activePile,
+      int cardsFlipped,
       Map<String, List<Card>> playerHands,
       Card? drawnCard,
       Map<String, int> playerScores,
@@ -281,8 +313,12 @@ class __$$TwoPlayerGameStateImplCopyWithImpl<$Res>
     Object? currentPlayer = freezed,
     Object? isFirstTurn = null,
     Object? isSecondTurn = null,
+    Object? canRipple = null,
+    Object? firstPlay = null,
     Object? drawPile = null,
     Object? discardPile = null,
+    Object? activePile = null,
+    Object? cardsFlipped = null,
     Object? playerHands = null,
     Object? drawnCard = freezed,
     Object? playerScores = null,
@@ -308,6 +344,14 @@ class __$$TwoPlayerGameStateImplCopyWithImpl<$Res>
           ? _value.isSecondTurn
           : isSecondTurn // ignore: cast_nullable_to_non_nullable
               as bool,
+      canRipple: null == canRipple
+          ? _value.canRipple
+          : canRipple // ignore: cast_nullable_to_non_nullable
+              as bool,
+      firstPlay: null == firstPlay
+          ? _value.firstPlay
+          : firstPlay // ignore: cast_nullable_to_non_nullable
+              as bool,
       drawPile: null == drawPile
           ? _value._drawPile
           : drawPile // ignore: cast_nullable_to_non_nullable
@@ -316,6 +360,14 @@ class __$$TwoPlayerGameStateImplCopyWithImpl<$Res>
           ? _value._discardPile
           : discardPile // ignore: cast_nullable_to_non_nullable
               as List<Card>,
+      activePile: null == activePile
+          ? _value._activePile
+          : activePile // ignore: cast_nullable_to_non_nullable
+              as List<Card>,
+      cardsFlipped: null == cardsFlipped
+          ? _value.cardsFlipped
+          : cardsFlipped // ignore: cast_nullable_to_non_nullable
+              as int,
       playerHands: null == playerHands
           ? _value._playerHands
           : playerHands // ignore: cast_nullable_to_non_nullable
@@ -371,8 +423,12 @@ class _$TwoPlayerGameStateImpl extends _TwoPlayerGameState {
       {required this.currentPlayer,
       required this.isFirstTurn,
       required this.isSecondTurn,
+      required this.canRipple,
+      required this.firstPlay,
       required final List<Card> drawPile,
       required final List<Card> discardPile,
+      required final List<Card> activePile,
+      required this.cardsFlipped,
       required final Map<String, List<Card>> playerHands,
       required this.drawnCard,
       required final Map<String, int> playerScores,
@@ -386,6 +442,7 @@ class _$TwoPlayerGameStateImpl extends _TwoPlayerGameState {
       required this.roundWinner})
       : _drawPile = drawPile,
         _discardPile = discardPile,
+        _activePile = activePile,
         _playerHands = playerHands,
         _playerScores = playerScores,
         _players = players,
@@ -402,6 +459,10 @@ class _$TwoPlayerGameStateImpl extends _TwoPlayerGameState {
   final bool isFirstTurn;
   @override
   final bool isSecondTurn;
+  @override
+  final bool canRipple;
+  @override
+  final bool firstPlay;
   final List<Card> _drawPile;
   @override
   List<Card> get drawPile {
@@ -418,6 +479,16 @@ class _$TwoPlayerGameStateImpl extends _TwoPlayerGameState {
     return EqualUnmodifiableListView(_discardPile);
   }
 
+  final List<Card> _activePile;
+  @override
+  List<Card> get activePile {
+    if (_activePile is EqualUnmodifiableListView) return _activePile;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_activePile);
+  }
+
+  @override
+  final int cardsFlipped;
   final Map<String, List<Card>> _playerHands;
   @override
   Map<String, List<Card>> get playerHands {
@@ -474,7 +545,7 @@ class _$TwoPlayerGameStateImpl extends _TwoPlayerGameState {
 
   @override
   String toString() {
-    return 'TwoPlayerGameModel(currentPlayer: $currentPlayer, isFirstTurn: $isFirstTurn, isSecondTurn: $isSecondTurn, drawPile: $drawPile, discardPile: $discardPile, playerHands: $playerHands, drawnCard: $drawnCard, playerScores: $playerScores, lobbyCode: $lobbyCode, players: $players, playersNotPlaying: $playersNotPlaying, playersPlaying: $playersPlaying, gameStatus: $gameStatus, host: $host, winner: $winner, roundWinner: $roundWinner)';
+    return 'TwoPlayerGameModel(currentPlayer: $currentPlayer, isFirstTurn: $isFirstTurn, isSecondTurn: $isSecondTurn, canRipple: $canRipple, firstPlay: $firstPlay, drawPile: $drawPile, discardPile: $discardPile, activePile: $activePile, cardsFlipped: $cardsFlipped, playerHands: $playerHands, drawnCard: $drawnCard, playerScores: $playerScores, lobbyCode: $lobbyCode, players: $players, playersNotPlaying: $playersNotPlaying, playersPlaying: $playersPlaying, gameStatus: $gameStatus, host: $host, winner: $winner, roundWinner: $roundWinner)';
   }
 
   @override
@@ -488,9 +559,17 @@ class _$TwoPlayerGameStateImpl extends _TwoPlayerGameState {
                 other.isFirstTurn == isFirstTurn) &&
             (identical(other.isSecondTurn, isSecondTurn) ||
                 other.isSecondTurn == isSecondTurn) &&
+            (identical(other.canRipple, canRipple) ||
+                other.canRipple == canRipple) &&
+            (identical(other.firstPlay, firstPlay) ||
+                other.firstPlay == firstPlay) &&
             const DeepCollectionEquality().equals(other._drawPile, _drawPile) &&
             const DeepCollectionEquality()
                 .equals(other._discardPile, _discardPile) &&
+            const DeepCollectionEquality()
+                .equals(other._activePile, _activePile) &&
+            (identical(other.cardsFlipped, cardsFlipped) ||
+                other.cardsFlipped == cardsFlipped) &&
             const DeepCollectionEquality()
                 .equals(other._playerHands, _playerHands) &&
             (identical(other.drawnCard, drawnCard) ||
@@ -514,24 +593,29 @@ class _$TwoPlayerGameStateImpl extends _TwoPlayerGameState {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      currentPlayer,
-      isFirstTurn,
-      isSecondTurn,
-      const DeepCollectionEquality().hash(_drawPile),
-      const DeepCollectionEquality().hash(_discardPile),
-      const DeepCollectionEquality().hash(_playerHands),
-      drawnCard,
-      const DeepCollectionEquality().hash(_playerScores),
-      lobbyCode,
-      const DeepCollectionEquality().hash(_players),
-      const DeepCollectionEquality().hash(_playersNotPlaying),
-      const DeepCollectionEquality().hash(_playersPlaying),
-      gameStatus,
-      host,
-      winner,
-      roundWinner);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        currentPlayer,
+        isFirstTurn,
+        isSecondTurn,
+        canRipple,
+        firstPlay,
+        const DeepCollectionEquality().hash(_drawPile),
+        const DeepCollectionEquality().hash(_discardPile),
+        const DeepCollectionEquality().hash(_activePile),
+        cardsFlipped,
+        const DeepCollectionEquality().hash(_playerHands),
+        drawnCard,
+        const DeepCollectionEquality().hash(_playerScores),
+        lobbyCode,
+        const DeepCollectionEquality().hash(_players),
+        const DeepCollectionEquality().hash(_playersNotPlaying),
+        const DeepCollectionEquality().hash(_playersPlaying),
+        gameStatus,
+        host,
+        winner,
+        roundWinner
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -553,8 +637,12 @@ abstract class _TwoPlayerGameState extends TwoPlayerGameModel {
       {required final User? currentPlayer,
       required final bool isFirstTurn,
       required final bool isSecondTurn,
+      required final bool canRipple,
+      required final bool firstPlay,
       required final List<Card> drawPile,
       required final List<Card> discardPile,
+      required final List<Card> activePile,
+      required final int cardsFlipped,
       required final Map<String, List<Card>> playerHands,
       required final Card? drawnCard,
       required final Map<String, int> playerScores,
@@ -578,9 +666,17 @@ abstract class _TwoPlayerGameState extends TwoPlayerGameModel {
   @override
   bool get isSecondTurn;
   @override
+  bool get canRipple;
+  @override
+  bool get firstPlay;
+  @override
   List<Card> get drawPile;
   @override
   List<Card> get discardPile;
+  @override
+  List<Card> get activePile;
+  @override
+  int get cardsFlipped;
   @override
   Map<String, List<Card>> get playerHands;
   @override

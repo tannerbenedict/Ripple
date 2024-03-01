@@ -9,6 +9,7 @@ import 'package:ripple/providers/game_providers/game_notifier.dart';
 import 'package:ripple/providers/game_providers/two_player_notifier.dart';
 import 'package:ripple/providers/login_info_provider.dart';
 import 'package:ripple/ui/games/ripple_bot_logic.dart';
+import 'package:ripple/ui/games/two_player/draw_pile.dart';
 import 'package:ripple/ui/lobby/lobby.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ripple/app/router.dart';
@@ -299,6 +300,72 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
     if (game.playerHands[user.firebaseId]!.length == 11) {
       throw DrawNotAllowedException();
     }
+  }
+
+  @override
+  Future<void> userFlipCard(User user, int index) async {
+    final db = ref.read(databaseRepositoryProvider);
+    final game = state.asData?.value;
+    _checkBasicConditions(user);
+    if ((!game!.isFirstTurn && !game.isSecondTurn)) {
+      throw CannotPassException();
+    }
+    final playerHands = {...game.playerHands};
+    final playerHand = [...playerHands[user.firebaseId]!];
+    playerHand[index] = Card(
+        faceValue: playerHand[index].faceValue,
+        id: playerHand[index].id,
+        isFlipped: true);
+    playerHands[user.firebaseId] = playerHand;
+    final nextPlayer = game.players[(game.players.indexOf(user) + 1) % 2];
+
+    await _optimisticStateUpdate(
+        game.copyWith(
+          currentPlayer: nextPlayer,
+          playerHands: playerHands,
+          isFirstTurn: false,
+          // If we're the first player, then we obviously passed. If we're
+          // the second, player the only way we could get this far is if the
+          // first player passed, so, this is always true.
+          isSecondTurn: !game.isSecondTurn,
+        ),
+        db);
+  }
+
+  @override
+  Future<void> placeCard(Card card, User user, int index) async {
+    final db = ref.read(databaseRepositoryProvider);
+    final game = state.asData?.value;
+    _checkBasicConditions(user);
+
+    final playerHands = {...game!.playerHands};
+    assert(playerHands.containsKey(user.firebaseId),
+        "User is marked as a player but does not have a hand");
+    final activePile = [...game.activePile];
+    final playerHand = [...playerHands[user.firebaseId]!];
+    final drawPile = [...game.drawPile];
+    final drawnCard = activePile.removeLast();
+
+    activePile.add(Card(
+        faceValue: playerHand[index].faceValue,
+        isFlipped: true,
+        id: playerHand[index].id));
+    playerHand[index] =
+        Card(faceValue: card.faceValue, isFlipped: true, id: card.id);
+    playerHands[user.firebaseId] = playerHand;
+
+    // Gin Rummy games always have two players, bot or human.
+    final nextPlayer = game.players[((game.players.indexOf(user) + 1) % 2)];
+
+    await _optimisticStateUpdate(
+      game.copyWith(
+        currentPlayer: nextPlayer,
+        playerHands: playerHands,
+        discardPile: activePile,
+        drawnCard: null,
+      ),
+      db,
+    );
   }
 
   @override

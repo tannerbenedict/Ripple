@@ -44,6 +44,8 @@ class CannotKnockException implements Exception {}
 
 class CannotDiscardException implements Exception {}
 
+class CannotRippleException implements Exception {}
+
 class InvalidGameStateError implements Error {
   dynamic message;
 

@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:ripple/models/database_models/card.dart';
 import 'package:ripple/models/user.dart';
 import 'package:ripple/providers/game_providers/game_notifier.dart';
+import 'package:ripple/providers/game_providers/two_player_notifier.dart';
 import 'package:ripple/ui/games/face_card.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ripple/ui/games/two_player/player_card.dart';
 
 enum LayoutDirection {
   horizontal,
@@ -26,7 +28,7 @@ class PlayerHand extends ConsumerWidget {
   static const _surroundingPadding = 8.0;
 
   final String lobbyCode;
-  final GameNotifierProvider gameNotifierProvider;
+  final TwoPlayerNotifierProvider gameNotifierProvider;
   final User player;
   final Duration animationDuration;
   final CardBuilder builder;
@@ -52,21 +54,21 @@ class PlayerHand extends ConsumerWidget {
             Flexible(
                 child: Row(
               children: [
-                defaultCardBuilder(context, playerHand[0]),
-                defaultCardBuilder(context, playerHand[1]),
-                defaultCardBuilder(context, playerHand[2]),
-                defaultCardBuilder(context, playerHand[3]),
-                defaultCardBuilder(context, playerHand[4]),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[0], 0),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[1], 1),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[2], 2),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[3], 3),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[4], 4),
               ],
             )),
             Flexible(
                 child: Row(
               children: [
-                defaultCardBuilder(context, playerHand[5]),
-                defaultCardBuilder(context, playerHand[6]),
-                defaultCardBuilder(context, playerHand[7]),
-                defaultCardBuilder(context, playerHand[8]),
-                defaultCardBuilder(context, playerHand[9]),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[5], 5),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[6], 6),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[7], 7),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[8], 8),
+                PlayerCard(lobbyCode, gameNotifierProvider, playerHand[9], 9),
               ],
             )),
           ],

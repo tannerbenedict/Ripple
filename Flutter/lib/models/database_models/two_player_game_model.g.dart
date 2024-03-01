@@ -14,12 +14,18 @@ _$TwoPlayerGameStateImpl _$$TwoPlayerGameStateImplFromJson(
           : User.fromJson(json['currentPlayer'] as Map<String, dynamic>),
       isFirstTurn: json['isFirstTurn'] as bool,
       isSecondTurn: json['isSecondTurn'] as bool,
+      canRipple: json['canRipple'] as bool,
+      firstPlay: json['firstPlay'] as bool,
       drawPile: (json['drawPile'] as List<dynamic>)
           .map((e) => Card.fromJson(e as Map<String, dynamic>))
           .toList(),
       discardPile: (json['discardPile'] as List<dynamic>)
           .map((e) => Card.fromJson(e as Map<String, dynamic>))
           .toList(),
+      activePile: (json['activePile'] as List<dynamic>)
+          .map((e) => Card.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      cardsFlipped: json['cardsFlipped'] as int,
       playerHands: (json['playerHands'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(
             k,
@@ -57,8 +63,12 @@ Map<String, dynamic> _$$TwoPlayerGameStateImplToJson(
       'currentPlayer': instance.currentPlayer?.toJson(),
       'isFirstTurn': instance.isFirstTurn,
       'isSecondTurn': instance.isSecondTurn,
+      'canRipple': instance.canRipple,
+      'firstPlay': instance.firstPlay,
       'drawPile': instance.drawPile.map((e) => e.toJson()).toList(),
       'discardPile': instance.discardPile.map((e) => e.toJson()).toList(),
+      'activePile': instance.activePile.map((e) => e.toJson()).toList(),
+      'cardsFlipped': instance.cardsFlipped,
       'playerHands': instance.playerHands
           .map((k, e) => MapEntry(k, e.map((e) => e.toJson()).toList())),
       'drawnCard': instance.drawnCard?.toJson(),
