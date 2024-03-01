@@ -242,7 +242,7 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
         game.copyWith(
             discardPile: discardPile,
             playerHands: playerHands,
-            drawnCard: drawnCard),
+            drawnCard: null),
         db);
   }
 
@@ -270,21 +270,21 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
       final topCard = pile.removeLast();
       pile.shuffle(Random(seed));
       await _optimisticStateUpdate(
-        game.copyWith(
-            currentPlayer: nextPlayer,
-            discardPile: [topCard],
-            drawPile: pile,
-            activePile: activePile,
-            drawnCard: drawnCard),db
-      );
+          game.copyWith(
+              currentPlayer: nextPlayer,
+              discardPile: [topCard],
+              drawPile: pile,
+              activePile: activePile,
+              drawnCard: null),
+          db);
     } else {
       await _optimisticStateUpdate(
-        game.copyWith(
-            currentPlayer: nextPlayer,
-            drawPile: drawPile,
-            activePile: activePile,
-            drawnCard: drawnCard),db
-      );
+          game.copyWith(
+              currentPlayer: nextPlayer,
+              drawPile: drawPile,
+              activePile: activePile,
+              drawnCard: drawnCard),
+          db);
     }
   }
 
@@ -347,6 +347,7 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
     final discardPile = [...game.discardPile];
     final playerHand = [...playerHands[user.firebaseId]!];
     bool canRipple = game.canRipple;
+    final activeDraw = activePile.isNotEmpty ? true : false;
     final playingCard =
         activePile.isEmpty ? discardPile.removeLast() : activePile.removeLast();
     if (game.firstPlay == false) {
@@ -361,19 +362,28 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
         faceValue: playingCard.faceValue, isFlipped: true, id: playingCard.id);
     playerHands[user.firebaseId] = playerHand;
 
-    // Gin Rummy games always have two players, bot or human.
-    //final nextPlayer = game.players[((game.players.indexOf(user) + 1) % 2)];
-
-    await _optimisticStateUpdate(
-        game.copyWith(
-          playerHands: playerHands,
-          activePile: activePile,
-          discardPile: discardPile,
-          canRipple: canRipple,
-          drawnCard: null,
-          firstPlay: false,
-        ),
-        db);
+    if (activeDraw) {
+      await _optimisticStateUpdate(
+          game.copyWith(
+            playerHands: playerHands,
+            activePile: activePile,
+            canRipple: canRipple,
+            drawnCard: null,
+            firstPlay: false,
+          ),
+          db);
+    } else {
+      await _optimisticStateUpdate(
+          game.copyWith(
+            playerHands: playerHands,
+            activePile: activePile,
+            discardPile: discardPile,
+            canRipple: canRipple,
+            drawnCard: null,
+            firstPlay: false,
+          ),
+          db);
+    }
   }
 
   @override

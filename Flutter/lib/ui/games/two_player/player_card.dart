@@ -61,7 +61,7 @@ class PlayerCard extends HookConsumerWidget {
             child: DragTarget<Card>(
               key: ValueKey(topCard),
               onWillAccept: (data) =>
-                  data != null && playerHand.contains(data),
+                  data != null,
               onAccept: (data) async => await ref
                   .read(provider(lobbyCode).notifier)
                   .placeCard(data, user, index),

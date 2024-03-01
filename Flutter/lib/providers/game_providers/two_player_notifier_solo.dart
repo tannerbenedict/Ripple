@@ -365,7 +365,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
             discardPile: [topCard],
             drawPile: pile,
             activePile: activePile,
-            drawnCard: drawnCard),
+            drawnCard: null),
       );
     } else {
       await _optimisticStateUpdate(
@@ -373,7 +373,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
             currentPlayer: nextPlayer,
             drawPile: drawPile,
             activePile: activePile,
-            drawnCard: drawnCard),
+            drawnCard: null),
       );
     }
   }
@@ -486,6 +486,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     final discardPile = [...game.discardPile];
     final playerHand = [...playerHands[user.firebaseId]!];
     bool canRipple = game.canRipple;
+    final activeDraw = activePile.isNotEmpty ? true : false;
     final playingCard =
         activePile.isEmpty ? discardPile.removeLast() : activePile.removeLast();
     if (game.firstPlay == false) {
@@ -500,19 +501,29 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
         faceValue: playingCard.faceValue, isFlipped: true, id: playingCard.id);
     playerHands[user.firebaseId] = playerHand;
 
-    // Gin Rummy games always have two players, bot or human.
-    //final nextPlayer = game.players[((game.players.indexOf(user) + 1) % 2)];
-
-    await _optimisticStateUpdate(
-      game.copyWith(
-        playerHands: playerHands,
-        activePile: activePile,
-        discardPile: discardPile,
-        canRipple: canRipple,
-        drawnCard: null,
-        firstPlay: false,
-      ),
-    );
+    if (activeDraw) {
+      await _optimisticStateUpdate(
+        game.copyWith(
+          playerHands: playerHands,
+          activePile: activePile,
+          canRipple: canRipple,
+          drawnCard: null,
+          firstPlay: false,
+        ),
+      );
+    }
+    else{
+      await _optimisticStateUpdate(
+        game.copyWith(
+          playerHands: playerHands,
+          activePile: activePile,
+          discardPile: discardPile,
+          canRipple: canRipple,
+          drawnCard: null,
+          firstPlay: false,
+        ),
+      );
+    }
   }
 
   void _checkCanFlip(int index, List<Card> PlayerHand) {

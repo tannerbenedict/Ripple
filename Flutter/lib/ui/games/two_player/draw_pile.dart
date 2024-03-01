@@ -80,7 +80,7 @@ class DrawPile extends ConsumerWidget {
                   }
                 : null,
             key: ValueKey(drawPile.last),
-            canDrag: canDraw,
+            canDrag: false,
             showCard: false,
             childWhenDragging: FaceCard(null, (_) {}),
           ),

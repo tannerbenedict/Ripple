@@ -95,7 +95,7 @@ class ActivePile extends HookConsumerWidget {
                             ? [
                                 SlideEffect(
                                   begin:
-                                      Offset(0, currentPlayer == user ? -1 : 1),
+                                      Offset(0, currentPlayer == user ? 1 : -1),
                                   end: Offset.zero,
                                   duration: animationDuration,
                                   curve: animationCurve,

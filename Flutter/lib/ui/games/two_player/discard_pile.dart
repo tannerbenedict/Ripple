@@ -58,7 +58,7 @@ class DiscardPile extends HookConsumerWidget {
             child: DragTarget<Card>(
               key: ValueKey(topCard),
               onWillAccept: (data) =>
-                  data != null && playerHand.contains(data) && canDiscard,
+                  data != null && canDiscard,
               onAccept: (data) async => await ref
                   .read(provider(lobbyCode).notifier)
                   .discardCard(data, user),
@@ -91,7 +91,7 @@ class DiscardPile extends HookConsumerWidget {
                             ? [
                                 SlideEffect(
                                   begin:
-                                      Offset(0, currentPlayer == user ? -1 : 1),
+                                      Offset(1, 0),
                                   end: Offset.zero,
                                   duration: animationDuration,
                                   curve: animationCurve,
