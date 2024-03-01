@@ -22,9 +22,7 @@ extension GameTypeImage on GameType {
 
 extension GameTypeOnMode on Iterable<GameType> {
   List<GameType> get soloGames => GameType.values;
-  List<GameType> get onlineGames => GameType.values
-      .where((element) => element != GameType.twoPlayer)
-      .toList();
+  List<GameType> get onlineGames => GameType.values;
 }
 
 enum Action {

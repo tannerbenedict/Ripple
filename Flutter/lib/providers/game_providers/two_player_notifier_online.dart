@@ -254,41 +254,37 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
     if (game!.isFirstTurn || game.isSecondTurn) {
       throw DrawNotAllowedException();
     }
-
-    final playerHands = {...game.playerHands};
+    final activePile = [...game.activePile];
     final drawPile = [...game.drawPile];
-    final playerHand = [...playerHands[user.firebaseId]!];
     assert(drawPile.isNotEmpty, "Cannot draw from an empty draw pile");
-    assert(playerHands.containsKey(user.firebaseId),
-        "User is in game but does not have a hand!");
     // Map.from only does a shallow clone, so we get the same reference
     // to the actual list, except it's now modifiable.
     // To prevent accidental modification, we instead create a copy here.
     final drawnCard = drawPile.removeLast();
-    final cardIndex =
-        RippleLogic.playIndex(playerHands[user.firebaseId]!, drawnCard);
-    playerHand[cardIndex] = drawnCard;
-    playerHands[user.firebaseId] = playerHand;
-
+    activePile.add(Card(
+        faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id));
+    final nextPlayer = game.players[(game.players.indexOf(user))];
     if (drawPile.isEmpty) {
       // Shuffle all but top card of discard into draw pile.
       final pile = List<Card>.from(game.discardPile);
       final topCard = pile.removeLast();
       pile.shuffle(Random(seed));
       await _optimisticStateUpdate(
-          game.copyWith(
-              discardPile: [topCard],
-              drawPile: pile,
-              playerHands: playerHands,
-              drawnCard: drawnCard),
-          db);
+        game.copyWith(
+            currentPlayer: nextPlayer,
+            discardPile: [topCard],
+            drawPile: pile,
+            activePile: activePile,
+            drawnCard: drawnCard),db
+      );
     } else {
       await _optimisticStateUpdate(
-          game.copyWith(
-              drawPile: drawPile,
-              playerHands: playerHands,
-              drawnCard: drawnCard),
-          db);
+        game.copyWith(
+            currentPlayer: nextPlayer,
+            drawPile: drawPile,
+            activePile: activePile,
+            drawnCard: drawnCard),db
+      );
     }
   }
 
@@ -297,7 +293,7 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
   void _checkCanDraw(User user) {
     _checkBasicConditions(user);
     final game = state.asData!.value!;
-    if (game.playerHands[user.firebaseId]!.length == 11) {
+    if (game.activePile.isNotEmpty) {
       throw DrawNotAllowedException();
     }
   }
@@ -312,18 +308,24 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
     }
     final playerHands = {...game.playerHands};
     final playerHand = [...playerHands[user.firebaseId]!];
+    _checkCanFlip(index, playerHand);
     playerHand[index] = Card(
         faceValue: playerHand[index].faceValue,
         id: playerHand[index].id,
         isFlipped: true);
     playerHands[user.firebaseId] = playerHand;
-    final nextPlayer = game.players[(game.players.indexOf(user) + 1) % 2];
-
+    final flipped = game.cardsFlipped + 1;
+    final nextPlayer = flipped > 2
+        ? game.players[(game.players.indexOf(user) + 1) % 2]
+        : game.players[(game.players.indexOf(user))];
+    final endTurn = flipped < 3;
+    final cardsFlipped = flipped < 3 ? flipped : 0;
     await _optimisticStateUpdate(
         game.copyWith(
           currentPlayer: nextPlayer,
           playerHands: playerHands,
-          isFirstTurn: false,
+          isFirstTurn: endTurn,
+          cardsFlipped: cardsFlipped,
           // If we're the first player, then we obviously passed. If we're
           // the second, player the only way we could get this far is if the
           // first player passed, so, this is always true.
@@ -342,30 +344,36 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
     assert(playerHands.containsKey(user.firebaseId),
         "User is marked as a player but does not have a hand");
     final activePile = [...game.activePile];
+    final discardPile = [...game.discardPile];
     final playerHand = [...playerHands[user.firebaseId]!];
-    final drawPile = [...game.drawPile];
-    final drawnCard = activePile.removeLast();
-
+    bool canRipple = game.canRipple;
+    final playingCard =
+        activePile.isEmpty ? discardPile.removeLast() : activePile.removeLast();
+    if (game.firstPlay == false) {
+      _checkCanPlace(user, index, playingCard, playerHand, canRipple);
+    }
+    canRipple = playerHand[index].isFlipped ? false : true;
     activePile.add(Card(
         faceValue: playerHand[index].faceValue,
         isFlipped: true,
         id: playerHand[index].id));
-    playerHand[index] =
-        Card(faceValue: card.faceValue, isFlipped: true, id: card.id);
+    playerHand[index] = Card(
+        faceValue: playingCard.faceValue, isFlipped: true, id: playingCard.id);
     playerHands[user.firebaseId] = playerHand;
 
     // Gin Rummy games always have two players, bot or human.
-    final nextPlayer = game.players[((game.players.indexOf(user) + 1) % 2)];
+    //final nextPlayer = game.players[((game.players.indexOf(user) + 1) % 2)];
 
     await _optimisticStateUpdate(
-      game.copyWith(
-        currentPlayer: nextPlayer,
-        playerHands: playerHands,
-        discardPile: activePile,
-        drawnCard: null,
-      ),
-      db,
-    );
+        game.copyWith(
+          playerHands: playerHands,
+          activePile: activePile,
+          discardPile: discardPile,
+          canRipple: canRipple,
+          drawnCard: null,
+          firstPlay: false,
+        ),
+        db);
   }
 
   @override
@@ -374,34 +382,29 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
     final game = state.asData?.value;
     _checkBasicConditions(user);
 
-    final playerHands = {...game!.playerHands};
-    assert(playerHands.containsKey(user.firebaseId),
-        "User is marked as a player but does not have a hand");
+    final activePile = [...game!.activePile];
     final discardPile = [...game.discardPile];
-    final playerHand = [...playerHands[user.firebaseId]!];
 
-    if (!playerHand.contains(card)) {
-      throw InvalidCardDiscardedException();
-    } else if (playerHand.length != 11) {
+    if (activePile.isEmpty) {
       throw CannotDiscardException();
     }
-    playerHand.remove(card);
-    playerHands[user.firebaseId] = playerHand;
+    activePile.remove(card);
     discardPile.add(card);
 
     // Gin Rummy games always have two players, bot or human.
     final nextPlayer = game.players[((game.players.indexOf(user) + 1) % 2)];
 
     await _optimisticStateUpdate(
-      game.copyWith(
-          currentPlayer: nextPlayer,
-          playerHands: playerHands,
-          discardPile: discardPile,
-          drawnCard: null,
-          isFirstTurn: false,
-          isSecondTurn: game.isFirstTurn),
-      db,
-    );
+        game.copyWith(
+            currentPlayer: nextPlayer,
+            activePile: activePile,
+            discardPile: discardPile,
+            drawnCard: null,
+            isFirstTurn: false,
+            canRipple: true,
+            firstPlay: true,
+            isSecondTurn: game.isFirstTurn),
+        db);
   }
 
   void _checkBasicConditions(User user) {
@@ -414,6 +417,111 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
       throw NotAPlayerException();
     } else if (game.currentPlayer != user) {
       throw NotPlayerTurnException();
+    }
+  }
+
+  void _checkCanPlace(User user, int index, Card playingCard,
+      List<Card> playerHand, bool canRipple) {
+    if (!canRipple) {
+      throw CannotRippleException();
+    }
+    final cardValue = playingCard.faceValue;
+    switch (index) {
+      case 0:
+        if (playerHand[0].isFlipped ||
+            (!playerHand[5].isFlipped ||
+                (playerHand[5].isFlipped &&
+                    playerHand[5].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 1:
+        if (playerHand[1].isFlipped ||
+            (!playerHand[6].isFlipped ||
+                (playerHand[6].isFlipped &&
+                    playerHand[6].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 2:
+        if (playerHand[2].isFlipped ||
+            (!playerHand[7].isFlipped ||
+                (playerHand[7].isFlipped &&
+                    playerHand[7].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 3:
+        if (playerHand[3].isFlipped ||
+            (!playerHand[8].isFlipped ||
+                (playerHand[8].isFlipped &&
+                    playerHand[8].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 4:
+        if (playerHand[4].isFlipped ||
+            (!playerHand[9].isFlipped ||
+                (playerHand[9].isFlipped &&
+                    playerHand[9].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 5:
+        if (playerHand[5].isFlipped ||
+            (!playerHand[0].isFlipped ||
+                (playerHand[0].isFlipped &&
+                    playerHand[0].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 6:
+        if (playerHand[6].isFlipped ||
+            (!playerHand[1].isFlipped ||
+                (playerHand[1].isFlipped &&
+                    playerHand[1].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 7:
+        if (playerHand[7].isFlipped ||
+            (!playerHand[2].isFlipped ||
+                (playerHand[2].isFlipped &&
+                    playerHand[2].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 8:
+        if (playerHand[9].isFlipped ||
+            (!playerHand[3].isFlipped ||
+                (playerHand[3].isFlipped &&
+                    playerHand[3].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+      case 9:
+        if (playerHand[9].isFlipped ||
+            (!playerHand[4].isFlipped ||
+                (playerHand[4].isFlipped &&
+                    playerHand[4].faceValue != cardValue))) {
+          throw CannotRippleException();
+        }
+    }
+  }
+
+  void _checkCanFlip(int index, List<Card> PlayerHand) {
+    switch (index) {
+      case 0:
+        if (PlayerHand[5].isFlipped) throw CannotPassException();
+      case 1:
+        if (PlayerHand[6].isFlipped) throw CannotPassException();
+      case 2:
+        if (PlayerHand[7].isFlipped) throw CannotPassException();
+      case 3:
+        if (PlayerHand[8].isFlipped) throw CannotPassException();
+      case 4:
+        if (PlayerHand[9].isFlipped) throw CannotPassException();
+      case 5:
+        if (PlayerHand[0].isFlipped) throw CannotPassException();
+      case 6:
+        if (PlayerHand[1].isFlipped) throw CannotPassException();
+      case 7:
+        if (PlayerHand[2].isFlipped) throw CannotPassException();
+      case 8:
+        if (PlayerHand[3].isFlipped) throw CannotPassException();
+      case 9:
+        if (PlayerHand[4].isFlipped) throw CannotPassException();
     }
   }
 

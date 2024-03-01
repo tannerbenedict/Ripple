@@ -7,7 +7,7 @@ part of 'two_player_notifier_solo.dart';
 // **************************************************************************
 
 String _$twoPlayerSoloNotifierHash() =>
-    r'95f0755633a952a45538fcc1288552e87ef9eedb';
+    r'd645f463c13ed71ae2dcc9327473a93795bc4a39';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -286,7 +286,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
         Card(faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id);
     playerHands[user.firebaseId] = playerHand;
 
-    if (RippleLogic.takeDiscard(activePile, playerHand)) {
+    if (RippleLogic.takeActive(activePile, playerHand)) {
       drawActivePile(user, activePile, playerHand);
     } else {
       botDiscardCard(user, activePile, playerHand);
@@ -300,6 +300,28 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
 
     final playerHands = {...game!.playerHands};
     final drawnCard = activePile.removeLast();
+    final cardIndex = RippleLogic.playActiveIndex(playerHand, drawnCard);
+    activePile.add(Card(
+        faceValue: playerHand[cardIndex].faceValue,
+        isFlipped: true,
+        id: playerHand[cardIndex].id));
+    playerHand[cardIndex] = playerHand[cardIndex] =
+        Card(faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id);
+    playerHands[user.firebaseId] = playerHand;
+    if (RippleLogic.takeActive(activePile, playerHand)) {
+      drawActivePile(user, activePile, playerHand);
+    } else {
+      botDiscardCard(user, activePile, playerHand);
+    }
+  }
+
+  @override
+  Future<void> drawActiveDrawPile(
+      User user, List<Card> activePile, List<Card> playerHand) async {
+    final game = state.asData?.value;
+
+    final playerHands = {...game!.playerHands};
+    final drawnCard = activePile.removeLast();
     final cardIndex = RippleLogic.playIndex(playerHand, drawnCard);
     activePile.add(Card(
         faceValue: playerHand[cardIndex].faceValue,
@@ -308,7 +330,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     playerHand[cardIndex] = playerHand[cardIndex] =
         Card(faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id);
     playerHands[user.firebaseId] = playerHand;
-    if (RippleLogic.takeDiscard(activePile, playerHand)) {
+    if (RippleLogic.takeActive(activePile, playerHand)) {
       drawActivePile(user, activePile, playerHand);
     } else {
       botDiscardCard(user, activePile, playerHand);
@@ -374,9 +396,8 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     final drawnCard = drawPile.removeLast();
     activePile.add(Card(
         faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id));
-    final nextPlayer = game.players[(game.players.indexOf(user))];
     if (RippleLogic.takeDiscard(activePile, playerHand)) {
-      drawActivePile(user, activePile, playerHand);
+      drawActiveDrawPile(user, activePile, playerHand);
     } else {
       botDiscardCard(user, activePile, playerHand);
     }

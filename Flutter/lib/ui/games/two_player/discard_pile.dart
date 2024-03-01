@@ -79,11 +79,7 @@ class DiscardPile extends HookConsumerWidget {
                       )
                     : DraggableFaceCard(
                         topCard,
-                        canDraw
-                            ? (value) async => await ref
-                                .read(provider(lobbyCode).notifier)
-                                .drawDiscardPile(user)
-                            : null,
+                        null,
                         canDrag: canDraw,
                         childWhenDragging: secondCard != null
                             ? FaceCard(secondCard, (_) {})

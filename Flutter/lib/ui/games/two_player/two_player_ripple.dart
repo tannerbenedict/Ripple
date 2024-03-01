@@ -101,16 +101,19 @@ class TwoPlayer extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Flexible(
+                  flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TopSection(lobbyCode, provider),
                   ),
                 ),
                 Flexible(
+                  flex:1,
                   child:
                       CenterSection(lobbyCode: lobbyCode, provider: provider),
                 ),
                 Flexible(
+                  flex:2,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: BottomSection(lobbyCode, provider),

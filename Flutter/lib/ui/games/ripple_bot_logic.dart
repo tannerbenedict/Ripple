@@ -111,6 +111,64 @@ class RippleLogic {
     return false;
   }
 
+  static bool takeActive(List<Card> discardPile, List<Card> botHand) {
+    if (discardPile.isEmpty) {
+      return false;
+    }
+    var discarded = discardPile.last.faceValue;
+    if (botHand[0].isFlipped &&
+        botHand[0].faceValue == discarded &&
+        (!botHand[5].isFlipped)) {
+      return true;
+    }
+    if (botHand[5].isFlipped &&
+        botHand[5].faceValue == discarded &&
+        (!botHand[0].isFlipped)) {
+      return true;
+    }
+    if (botHand[1].isFlipped &&
+        botHand[1].faceValue == discarded &&
+        (!botHand[6].isFlipped)) {
+      return true;
+    }
+    if (botHand[6].isFlipped &&
+        botHand[6].faceValue == discarded &&
+        (!botHand[1].isFlipped)) {
+      return true;
+    }
+    if (botHand[2].isFlipped &&
+        botHand[2].faceValue == discarded &&
+        (!botHand[7].isFlipped)) {
+      return true;
+    }
+    if (botHand[7].isFlipped &&
+        botHand[7].faceValue == discarded &&
+        (!botHand[2].isFlipped)) {
+      return true;
+    }
+    if (botHand[3].isFlipped &&
+        botHand[3].faceValue == discarded &&
+        (!botHand[8].isFlipped)) {
+      return true;
+    }
+    if (botHand[8].isFlipped &&
+        botHand[8].faceValue == discarded &&
+        (!botHand[3].isFlipped)) {
+      return true;
+    }
+    if (botHand[4].isFlipped &&
+        botHand[4].faceValue == discarded &&
+        (!botHand[9].isFlipped)) {
+      return true;
+    }
+    if (botHand[9].isFlipped &&
+        botHand[9].faceValue == discarded &&
+        (!botHand[4].isFlipped)) {
+      return true;
+    }
+    return false;
+  }
+
   static int playIndex(List<Card> botHand, Card drawnCard) {
     var discarded = drawnCard.getCardValue();
     if (botHand[0].isFlipped && botHand[0].getCardValue() == discarded) {
@@ -225,6 +283,61 @@ class RippleLogic {
     }
     if (!botHand[4].isFlipped && !botHand[9].isFlipped) {
       return 9;
+    }
+    return 10;
+  }
+
+  static int playActiveIndex(List<Card> botHand, Card drawnCard) {
+    var discarded = drawnCard.faceValue;
+    if (botHand[0].isFlipped && botHand[0].faceValue == discarded) {
+      if (!botHand[5].isFlipped) {
+        return 5;
+      }
+    }
+    if (botHand[5].isFlipped && botHand[5].faceValue == discarded) {
+      if (!botHand[0].isFlipped) {
+        return 0;
+      }
+    }
+    if (botHand[1].isFlipped && botHand[1].faceValue == discarded) {
+      if (!botHand[6].isFlipped) {
+        return 6;
+      }
+    }
+    if (botHand[6].isFlipped && botHand[6].faceValue == discarded) {
+      if (!botHand[1].isFlipped) {
+        return 1;
+      }
+    }
+    if (botHand[2].isFlipped && botHand[2].faceValue == discarded) {
+      if (!botHand[7].isFlipped) {
+        return 7;
+      }
+    }
+    if (botHand[7].isFlipped && botHand[7].faceValue == discarded) {
+      if (!botHand[2].isFlipped) {
+        return 2;
+      }
+    }
+    if (botHand[3].isFlipped && botHand[3].faceValue == discarded) {
+      if (!botHand[8].isFlipped) {
+        return 8;
+      }
+    }
+    if (botHand[8].isFlipped && botHand[8].faceValue == discarded) {
+      if (!botHand[3].isFlipped) {
+        return 3;
+      }
+    }
+    if (botHand[4].isFlipped && botHand[4].faceValue == discarded) {
+      if (!botHand[9].isFlipped) {
+        return 9;
+      }
+    }
+    if (botHand[9].isFlipped && botHand[9].faceValue == discarded) {
+      if (!botHand[4].isFlipped) {
+        return 4;
+      }
     }
     return 10;
   }
