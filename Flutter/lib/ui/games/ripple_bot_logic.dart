@@ -341,4 +341,131 @@ class RippleLogic {
     }
     return 10;
   }
+
+  static bool allFlipped(List<Card> playerHand) {
+    for (Card card in playerHand) {
+      if (!card.isFlipped) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static int calculateScore(List<Card> playerHand) {
+    int score = 0;
+    if ((playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[2].faceValue &&
+            playerHand[0].faceValue == playerHand[3].faceValue &&
+            playerHand[0].faceValue == playerHand[4].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue &&
+            playerHand[0].faceValue == playerHand[7].faceValue &&
+            playerHand[0].faceValue == playerHand[8].faceValue &&
+            playerHand[0].faceValue == playerHand[9].faceValue) ||
+        (playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue &&
+            playerHand[2].faceValue == playerHand[3].faceValue &&
+            playerHand[2].faceValue == playerHand[4].faceValue &&
+            playerHand[2].faceValue == playerHand[7].faceValue &&
+            playerHand[2].faceValue == playerHand[8].faceValue &&
+            playerHand[2].faceValue == playerHand[9].faceValue) ||
+        (playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[2].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue &&
+            playerHand[0].faceValue == playerHand[7].faceValue &&
+            playerHand[3].faceValue == playerHand[4].faceValue &&
+            playerHand[3].faceValue == playerHand[8].faceValue &&
+            playerHand[3].faceValue == playerHand[9].faceValue)) {
+      score += -100;
+    } else if ((playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[2].faceValue &&
+            playerHand[0].faceValue == playerHand[3].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue &&
+            playerHand[0].faceValue == playerHand[7].faceValue &&
+            playerHand[0].faceValue == playerHand[8].faceValue) ||
+        (playerHand[1].faceValue == playerHand[2].faceValue &&
+            playerHand[1].faceValue == playerHand[3].faceValue &&
+            playerHand[1].faceValue == playerHand[4].faceValue &&
+            playerHand[1].faceValue == playerHand[6].faceValue &&
+            playerHand[1].faceValue == playerHand[7].faceValue &&
+            playerHand[1].faceValue == playerHand[8].faceValue &&
+            playerHand[1].faceValue == playerHand[9].faceValue) ||
+        (playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue &&
+            playerHand[2].faceValue == playerHand[3].faceValue &&
+            playerHand[2].faceValue == playerHand[7].faceValue &&
+            playerHand[2].faceValue == playerHand[8].faceValue) ||
+        (playerHand[1].faceValue == playerHand[2].faceValue &&
+            playerHand[1].faceValue == playerHand[6].faceValue &&
+            playerHand[1].faceValue == playerHand[7].faceValue &&
+            playerHand[3].faceValue == playerHand[4].faceValue &&
+            playerHand[3].faceValue == playerHand[8].faceValue &&
+            playerHand[3].faceValue == playerHand[9].faceValue) ||
+        (playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue &&
+            playerHand[3].faceValue == playerHand[4].faceValue &&
+            playerHand[3].faceValue == playerHand[8].faceValue &&
+            playerHand[3].faceValue == playerHand[9].faceValue)) {
+      score += -80;
+    } else if ((playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[2].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue &&
+            playerHand[0].faceValue == playerHand[7].faceValue) ||
+        (playerHand[1].faceValue == playerHand[2].faceValue &&
+            playerHand[1].faceValue == playerHand[3].faceValue &&
+            playerHand[1].faceValue == playerHand[6].faceValue &&
+            playerHand[1].faceValue == playerHand[7].faceValue &&
+            playerHand[1].faceValue == playerHand[8].faceValue) ||
+        (playerHand[2].faceValue == playerHand[3].faceValue &&
+            playerHand[2].faceValue == playerHand[4].faceValue &&
+            playerHand[2].faceValue == playerHand[7].faceValue &&
+            playerHand[2].faceValue == playerHand[8].faceValue &&
+            playerHand[2].faceValue == playerHand[9].faceValue)) {
+      score += -60;
+    } else if ((playerHand[0].faceValue == playerHand[1].faceValue &&
+            playerHand[0].faceValue == playerHand[5].faceValue &&
+            playerHand[0].faceValue == playerHand[6].faceValue) ||
+        (playerHand[1].faceValue == playerHand[2].faceValue &&
+            playerHand[1].faceValue == playerHand[6].faceValue &&
+            playerHand[1].faceValue == playerHand[7].faceValue) ||
+        (playerHand[2].faceValue == playerHand[3].faceValue &&
+            playerHand[2].faceValue == playerHand[7].faceValue &&
+            playerHand[2].faceValue == playerHand[8].faceValue) ||
+        (playerHand[3].faceValue == playerHand[7].faceValue &&
+            playerHand[3].faceValue == playerHand[8].faceValue &&
+            playerHand[3].faceValue == playerHand[9].faceValue)) {
+      score += -40;
+    }
+    if (playerHand[0].getCardValue() != playerHand[5].getCardValue()) {
+      score += playerHand[0].getCardValue() + playerHand[5].getCardValue();
+    }
+    if (playerHand[1].getCardValue() != playerHand[6].getCardValue()) {
+      score += playerHand[1].getCardValue() + playerHand[6].getCardValue();
+    }
+    if (playerHand[2].getCardValue() != playerHand[7].getCardValue()) {
+      score += playerHand[2].getCardValue() + playerHand[7].getCardValue();
+    }
+    if (playerHand[3].getCardValue() != playerHand[8].getCardValue()) {
+      score += playerHand[3].getCardValue() + playerHand[8].getCardValue();
+    }
+    if (playerHand[4].getCardValue() != playerHand[9].getCardValue()) {
+      score += playerHand[4].getCardValue() + playerHand[9].getCardValue();
+    }
+    return score;
+  }
+
+  static List<Card> flipRemaining(List<Card> playerHand) {
+    List<Card> allFlipped = [];
+    for (Card card in playerHand) {
+      allFlipped
+          .add(Card(faceValue: card.faceValue, isFlipped: true, id: card.id));
+    }
+    return allFlipped;
+  }
 }

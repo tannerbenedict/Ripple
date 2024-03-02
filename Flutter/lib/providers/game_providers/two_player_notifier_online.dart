@@ -361,29 +361,72 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
     playerHand[index] = Card(
         faceValue: playingCard.faceValue, isFlipped: true, id: playingCard.id);
     playerHands[user.firebaseId] = playerHand;
-
-    if (activeDraw) {
-      await _optimisticStateUpdate(
-          game.copyWith(
-            playerHands: playerHands,
-            activePile: activePile,
-            canRipple: canRipple,
-            drawnCard: null,
-            firstPlay: false,
-          ),
-          db);
+    if (RippleLogic.allFlipped(playerHand)) {
+      endRound(user, activePile, playerHand);
     } else {
-      await _optimisticStateUpdate(
-          game.copyWith(
-            playerHands: playerHands,
-            activePile: activePile,
-            discardPile: discardPile,
-            canRipple: canRipple,
-            drawnCard: null,
-            firstPlay: false,
-          ),
-          db);
+      if (activeDraw) {
+        await _optimisticStateUpdate(
+            game.copyWith(
+              playerHands: playerHands,
+              activePile: activePile,
+              canRipple: canRipple,
+              drawnCard: null,
+              firstPlay: false,
+            ),
+            db);
+      } else {
+        await _optimisticStateUpdate(
+            game.copyWith(
+              playerHands: playerHands,
+              activePile: activePile,
+              discardPile: discardPile,
+              canRipple: canRipple,
+              drawnCard: null,
+              firstPlay: false,
+            ),
+            db);
+      }
     }
+  }
+
+  @override
+  Future<void> endRound(
+      User user, List<Card> activePile, List<Card> playerHand) async {
+    final db = ref.read(databaseRepositoryProvider);
+    final game = state.asData?.value;
+    final playerHands = {...game!.playerHands};
+    final playerScores = {...game.playerScores};
+    int playerUpdatedScore;
+    int oppUpdatedScore;
+    var opp =
+        game.players.where((player) => player.firebaseId != user.firebaseId);
+    final oppHand =
+        RippleLogic.flipRemaining(playerHands[opp.first.firebaseId]!);
+    final playerScore = RippleLogic.calculateScore(playerHand);
+    final oppScore =
+        RippleLogic.calculateScore(playerHands[opp.first.firebaseId]!);
+    playerUpdatedScore =
+        playerScores.update(user.firebaseId, (value) => value + playerScore);
+    oppUpdatedScore =
+        playerScores.update(opp.first.firebaseId, (value) => value + oppScore);
+    final nextPlayer = game.players[((game.players.indexOf(user) + 1) % 2)];
+    playerHands[user.firebaseId] = playerHand;
+    playerHands[opp.first.firebaseId] = oppHand;
+    await _optimisticStateUpdate(
+        game.copyWith(
+            playerScores: playerScores,
+            playerHands: playerHands,
+            gameStatus: playerUpdatedScore >= 100
+                ? GameStatus.finished
+                : oppUpdatedScore >= 100
+                    ? GameStatus.finished
+                    : playerUpdatedScore <= -100
+                        ? GameStatus.finished
+                        : oppUpdatedScore <= -100
+                            ? GameStatus.finished
+                            : GameStatus.roundEnded,
+            currentPlayer: nextPlayer),
+        db);
   }
 
   @override

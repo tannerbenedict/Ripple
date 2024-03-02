@@ -146,6 +146,8 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
       discardPile: [],
       activePile: [],
       cardsFlipped: 0,
+      canRipple: true,
+      firstPlay: true,
       gameStatus: GameStatus.playing,
       currentPlayer: firstPlayer,
       isFirstTurn: true,
@@ -187,6 +189,8 @@ class TwoPlayerGameModel extends GameModel with _$TwoPlayerGameModel {
         isSecondTurn: false,
         drawnCard: null,
         roundWinner: null,
+        canRipple: true,
+        firstPlay: true,
         playersPlaying: [],
         playerScores: newPlayerScores,
         playersNotPlaying: []);
