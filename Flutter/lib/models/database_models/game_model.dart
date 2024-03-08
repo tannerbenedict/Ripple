@@ -78,16 +78,13 @@ abstract class GameModel {
     for (int i = 0; i < 18; i++) {
       allCards.add(Card(faceValue: 0, isFlipped: false));
     }
-    for (int i = 1; i < 13; i++) {
-      for (int j = 0; j < 12; j++) {
-        allCards.add(Card(faceValue: i, isFlipped: false));
+    for (int i = 0; i < 12; i++) {
+      for (int j = 1; j < 13; j++) {
+        allCards.add(Card(faceValue: j, isFlipped: false));
       }
+        allCards.shuffle(rng);
     }
-
     allCards.shuffle(rng);
-    allCards.shuffle();
-    allCards.shuffle();
-
     return allCards;
   }
 }

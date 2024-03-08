@@ -58,7 +58,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     await Future.delayed(botDelay);
 
     if (game.isFirstTurn || game.isSecondTurn) {
-      await flipCards(User.defaultBot(0));
+      await flipCards(User.defaultBot(0), 0);
       return;
     } else if (RippleLogic.takeDiscard(
       game.discardPile,
@@ -138,7 +138,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
   }
 
   @override
-  Future<void> flipCards(User user) async {
+  Future<void> flipCards(User user, int count) async {
     final game = state.asData?.value;
     _checkBasicConditions(user);
     if ((!game!.isFirstTurn && !game.isSecondTurn)) {
@@ -146,30 +146,39 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     }
     final playerHands = {...game.playerHands};
     final playerHand = [...playerHands[user.firebaseId]!];
-    playerHand[6] = Card(
-        faceValue: playerHand[6].faceValue,
-        id: playerHand[6].id,
-        isFlipped: true);
-    playerHand[2] = Card(
-        faceValue: playerHand[2].faceValue,
-        id: playerHand[2].id,
-        isFlipped: true);
-    playerHand[8] = Card(
-        faceValue: playerHand[8].faceValue,
-        id: playerHand[8].id,
+    final rand = Random();
+    bool canFlip = false;
+    int randIndex = 0;
+    while (!canFlip) {
+      randIndex = rand.nextInt(playerHand.length);
+      canFlip = _checkCanBotFlip(randIndex, playerHand);
+    }
+
+    playerHand[randIndex] = Card(
+        faceValue: playerHand[randIndex].faceValue,
+        id: playerHand[randIndex].id,
         isFlipped: true);
     playerHands[user.firebaseId] = playerHand;
-    final nextPlayer = game.players[(game.players.indexOf(user) + 1) % 2];
 
-    await _optimisticStateUpdate(game.copyWith(
-      currentPlayer: nextPlayer,
-      playerHands: playerHands,
-      isFirstTurn: false,
-      // If we're the first player, then we obviously passed. If we're
-      // the second, player the only way we could get this far is if the
-      // first player passed, so, this is always true.
-      isSecondTurn: !game.isSecondTurn,
-    ));
+    final nextPlayer = game.players[(game.players.indexOf(user) + 1) % 2];
+    if (count < 3) {
+      count++;
+      await _optimisticStateUpdate(game.copyWith(playerHands: playerHands));
+      await Future.delayed(Duration(milliseconds: 500));
+      await flipCards(user, count);
+    }
+    else{
+      await _optimisticStateUpdate(game.copyWith(
+        currentPlayer: nextPlayer,
+        playerHands: playerHands,
+        isFirstTurn: false,
+        // If we're the first player, then we obviously passed. If we're
+        // the second, player the only way we could get this far is if the
+        // first player passed, so, this is always true.
+        isSecondTurn: !game.isSecondTurn,
+      ));
+    }
+    
   }
 
   @override
@@ -289,18 +298,25 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     if (RippleLogic.allFlipped(playerHand)) {
       endRound(user, activePile, playerHand);
     } else if (RippleLogic.takeActive(activePile, playerHand)) {
-      drawActivePile(user, activePile, discardPile, playerHand);
+      await _optimisticStateUpdate(
+          game.copyWith(playerHands: playerHands, activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await drawActivePile(user, discardPile);
     } else {
-      botDiscardCard(user, activePile, discardPile, playerHand);
+      await _optimisticStateUpdate(
+          game.copyWith(playerHands: playerHands, activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await botDiscardCard(user, discardPile, playerHand);
     }
   }
 
   @override
-  Future<void> drawActivePile(User user, List<Card> activePile,
-      List<Card> discardPile, List<Card> playerHand) async {
+  Future<void> drawActivePile(User user, List<Card> discardPile) async {
     final game = state.asData?.value;
 
     final playerHands = {...game!.playerHands};
+    final playerHand = [...playerHands[user.firebaseId]!];
+    final activePile = [...game.activePile];
     final drawnCard = activePile.removeLast();
     final cardIndex = RippleLogic.playActiveIndex(playerHand, drawnCard);
     activePile.add(Card(
@@ -313,19 +329,25 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     if (RippleLogic.allFlipped(playerHand)) {
       endRound(user, activePile, playerHand);
     } else if (RippleLogic.takeActive(activePile, playerHand)) {
-      drawActivePile(user, activePile, discardPile, playerHand);
+      await _optimisticStateUpdate(
+          game.copyWith(playerHands: playerHands, activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await drawActivePile(user, discardPile);
     } else {
-      botDiscardCard(user, activePile, discardPile, playerHand);
+      await _optimisticStateUpdate(
+          game.copyWith(playerHands: playerHands, activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await botDiscardCard(user, discardPile, playerHand);
     }
   }
 
   @override
-  Future<void> drawActiveDrawPile(
-      User user, List<Card> activePile, List<Card> playerHand) async {
+  Future<void> drawActiveDrawPile(User user, List<Card> playerHand) async {
     final game = state.asData?.value;
 
     final playerHands = {...game!.playerHands};
     final discardPile = [...game.discardPile];
+    final activePile = [...game.activePile];
     final drawnCard = activePile.removeLast();
     final cardIndex = RippleLogic.playIndex(playerHand, drawnCard);
     activePile.add(Card(
@@ -339,9 +361,15 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
       endRound(user, activePile, playerHand);
     }
     if (RippleLogic.takeActive(activePile, playerHand)) {
-      drawActivePile(user, activePile, discardPile, playerHand);
+      await _optimisticStateUpdate(
+          game.copyWith(playerHands: playerHands, activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await drawActivePile(user, discardPile);
     } else {
-      botDiscardCard(user, activePile, discardPile, playerHand);
+      await _optimisticStateUpdate(
+          game.copyWith(playerHands: playerHands, activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await botDiscardCard(user, discardPile, playerHand);
     }
   }
 
@@ -358,7 +386,9 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     // Map.from only does a shallow clone, so we get the same reference
     // to the actual list, except it's now modifiable.
     // To prevent accidental modification, we instead create a copy here.
-    final drawnCard = drawPile.removeLast();
+    final rand = Random();
+    final randIndex = rand.nextInt(drawPile.length);
+    final drawnCard = drawPile.removeAt(randIndex);
     activePile.add(Card(
         faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id));
     final nextPlayer = game.players[(game.players.indexOf(user))];
@@ -402,13 +432,20 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     // Map.from only does a shallow clone, so we get the same reference
     // to the actual list, except it's now modifiable.
     // To prevent accidental modification, we instead create a copy here.
-    final drawnCard = drawPile.removeLast();
+    final rand = Random();
+    final randIndex = rand.nextInt(drawPile.length);
+    final drawnCard = drawPile.removeAt(randIndex);
     activePile.add(Card(
         faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id));
+    await _optimisticStateUpdate(game.copyWith(drawPile: drawPile));
     if (RippleLogic.takeDiscard(activePile, playerHand)) {
-      drawActiveDrawPile(user, activePile, playerHand);
+      await _optimisticStateUpdate(game.copyWith(activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await drawActiveDrawPile(user, playerHand);
     } else {
-      botDiscardCard(user, activePile, discardPile, playerHand);
+      await _optimisticStateUpdate(game.copyWith(activePile: activePile));
+      await Future.delayed(Duration(seconds: 1));
+      await botDiscardCard(user, discardPile, playerHand);
     }
   }
 
@@ -454,11 +491,11 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
 
   @override
   Future<void> botDiscardCard(
-      User user, List<Card> activePile, List<Card> discardPile, List<Card> playerHand) async {
+      User user, List<Card> discardPile, List<Card> playerHand) async {
     final game = state.asData?.value;
     _checkBasicConditions(user);
     final playerHands = {...game!.playerHands};
-
+    final activePile = [...game.activePile];
     if (activePile.isEmpty) {
       throw CannotDiscardException();
     }
@@ -573,7 +610,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
                           : GameStatus.roundEnded,
           currentPlayer: nextPlayer),
     );
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 5));
     await startNewRound();
   }
 
@@ -600,6 +637,32 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
       case 9:
         if (PlayerHand[4].isFlipped) throw CannotPassException();
     }
+  }
+
+  bool _checkCanBotFlip(int index, List<Card> PlayerHand) {
+    switch (index) {
+      case 0:
+        if (PlayerHand[5].isFlipped) return false;
+      case 1:
+        if (PlayerHand[6].isFlipped) return false;
+      case 2:
+        if (PlayerHand[7].isFlipped) return false;
+      case 3:
+        if (PlayerHand[8].isFlipped) return false;
+      case 4:
+        if (PlayerHand[9].isFlipped) return false;
+      case 5:
+        if (PlayerHand[0].isFlipped) return false;
+      case 6:
+        if (PlayerHand[1].isFlipped) return false;
+      case 7:
+        if (PlayerHand[2].isFlipped) return false;
+      case 8:
+        if (PlayerHand[3].isFlipped) return false;
+      case 9:
+        if (PlayerHand[4].isFlipped) return false;
+    }
+    return true;
   }
 
   void _checkCanPlace(User user, int index, Card playingCard,
@@ -666,7 +729,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
           throw CannotRippleException();
         }
       case 8:
-        if (playerHand[9].isFlipped ||
+        if (playerHand[8].isFlipped ||
             (!playerHand[3].isFlipped ||
                 (playerHand[3].isFlipped &&
                     playerHand[3].faceValue != cardValue))) {

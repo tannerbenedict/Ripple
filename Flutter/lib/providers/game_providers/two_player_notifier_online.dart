@@ -111,32 +111,8 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
   }
 
   @override
-  Future<void> flipCards(User user) async {
-    final db = ref.read(databaseRepositoryProvider);
-    final game = state.asData?.value;
-    _checkBasicConditions(user);
-    if ((!game!.isFirstTurn && !game.isSecondTurn)) {
-      throw CannotPassException();
-    }
-    final playerHands = {...game.playerHands};
-    final playerHand = [...playerHands[user.firebaseId]!];
-    playerHand[6].copyWith(isFlipped: true);
-    playerHand[2].copyWith(isFlipped: true);
-    playerHand[8].copyWith(isFlipped: true);
-    playerHands[user.firebaseId] = playerHand;
-    final nextPlayer = game.players[(game.players.indexOf(user) + 1) % 2];
-
-    await _optimisticStateUpdate(
-        game.copyWith(
-          currentPlayer: nextPlayer,
-          isFirstTurn: false,
-          // If we're the first player, then we obviously passed. If we're
-          // the second, player the only way we could get this far is if the
-          // first player passed, so, this is always true.
-          isSecondTurn: !game.isSecondTurn,
-          playerHands: playerHands,
-        ),
-        db);
+  Future<void> flipCards(User user, int count) async {
+    //not used online
   }
 
   @override
