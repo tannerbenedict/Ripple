@@ -14,7 +14,6 @@ import 'package:ripple/ui/games/two_player/center_section.dart';
 import 'package:ripple/ui/games/two_player/game_over.dart';
 import 'package:ripple/ui/games/two_player/top_section.dart';
 
-
 const padding = 8.0;
 final animationDuration = 500.ms;
 const animationCurve = Curves.easeIn;
@@ -38,6 +37,7 @@ class TwoPlayer extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     User user = User.getRealOrDefaultUser(
         ref.read(loginInfoProvider.select((value) => value.user)));
+
     final gameState = ref
         .watch(provider(lobbyCode).select((value) => value.whenData((value) => (
               value!.gameStatus,
@@ -45,89 +45,93 @@ class TwoPlayer extends HookConsumerWidget {
               value.playersNotPlaying,
               value.playersPlaying,
             ))));
-
     return PopScope(
-      canPop: false,
-      child: Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AutoHidingAppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Ripple"),
-            gameMode == GameMode.online
-                ? Text(
-                    "Lobby Code: $lobbyCode",
-                    style: Theme.of(context).textTheme.titleSmall,
-                  )
-                : const SizedBox.shrink(),
-          ],
-        ),
-        actions: [
-          if (gameMode == GameMode.online)
-            IconButton(
-              icon: Icon(Icons.message_outlined),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => ChatRoom(lobbyCode, user.firebaseId),
+        canPop: false,
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AutoHidingAppBar(
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Ripple"),
+                gameMode == GameMode.online
+                    ? Text(
+                        "Lobby Code: $lobbyCode",
+                        style: Theme.of(context).textTheme.titleSmall,
+                      )
+                    : const SizedBox.shrink(),
+              ],
+            ),
+            actions: [
+              if (gameMode == GameMode.online)
+                IconButton(
+                  icon: Icon(Icons.message_outlined),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          ChatRoom(lobbyCode, user.firebaseId),
+                    );
+                  },
+                ),
+              _buildHelpButton(context),
+            ],
+          ),
+          body: GameBackground(
+            child: gameState.when(
+              data: (data) {
+                final (
+                  gameStatus,
+                  playerScores,
+                  playersNotPlaying,
+                  playersPlaying,
+                ) = data;
+                if ((gameStatus == GameStatus.finished ||
+                        gameStatus == GameStatus.inLobby) &&
+                    playersNotPlaying.isEmpty &&
+                    playersPlaying.isEmpty) {
+                final opp = playersPlaying
+                    .where((player) => player.firebaseId != user.firebaseId);
+                final playerScore = playerScores[user.firebaseId]!;
+                final oppScore = playerScores[opp.first.firebaseId]!;
+                  if ((playerScore <= -100 || oppScore >= 100) && playerScore < oppScore) {
+                    _showWinnerBox(context, ref);
+                  } else {
+                    _showLoserBox(context, ref);
+                  }
+                }
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TopSection(lobbyCode, provider),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: CenterSection(
+                          lobbyCode: lobbyCode, provider: provider),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: BottomSection(lobbyCode, provider),
+                      ),
+                    ),
+                  ],
                 );
               },
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) =>
+                  const Text("Something went wrong. Please check the logs"),
             ),
-          _buildHelpButton(context),
-        ],
-      ),
-      body: GameBackground(
-        child: gameState.when(
-          data: (data) {
-            final (
-              gameStatus,
-              playerScores,
-              playersNotPlaying,
-              playersPlaying,
-            ) = data;
-            if ((gameStatus == GameStatus.finished ||
-                    gameStatus == GameStatus.inLobby) &&
-                playersNotPlaying.isEmpty &&
-                playersPlaying.isEmpty) {
-              if (playerScores[user.firebaseId]! >= 100) {
-                _showWinnerBox(context, ref);
-              } else {
-                _showLoserBox(context, ref);
-              }
-            }
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TopSection(lobbyCode, provider),
-                  ),
-                ),
-                Flexible(
-                  flex:1,
-                  child:
-                      CenterSection(lobbyCode: lobbyCode, provider: provider),
-                ),
-                Flexible(
-                  flex:2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: BottomSection(lobbyCode, provider),
-                  ),
-                ),
-              ],
-            );
-          },
-          loading: () => Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) =>
-              const Text("Something went wrong. Please check the logs"),
-        ),
-      ),
-    ));
+          ),
+        ));
   }
 
   void _showWinnerBox(BuildContext context, WidgetRef ref) async {
@@ -166,7 +170,6 @@ class TwoPlayer extends HookConsumerWidget {
       );
     });
   }
-
 
   Widget _buildHelpButton(BuildContext context) => IconButton(
       onPressed: () {

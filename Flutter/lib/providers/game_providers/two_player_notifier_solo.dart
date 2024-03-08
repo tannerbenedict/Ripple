@@ -286,17 +286,18 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     playerHand[cardIndex] =
         Card(faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id);
     playerHands[user.firebaseId] = playerHand;
-
-    if (RippleLogic.takeActive(activePile, playerHand)) {
-      drawActivePile(user, activePile, playerHand);
+    if (RippleLogic.allFlipped(playerHand)) {
+      endRound(user, activePile, playerHand);
+    } else if (RippleLogic.takeActive(activePile, playerHand)) {
+      drawActivePile(user, activePile, discardPile, playerHand);
     } else {
-      botDiscardCard(user, activePile, playerHand);
+      botDiscardCard(user, activePile, discardPile, playerHand);
     }
   }
 
   @override
-  Future<void> drawActivePile(
-      User user, List<Card> activePile, List<Card> playerHand) async {
+  Future<void> drawActivePile(User user, List<Card> activePile,
+      List<Card> discardPile, List<Card> playerHand) async {
     final game = state.asData?.value;
 
     final playerHands = {...game!.playerHands};
@@ -309,10 +310,12 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     playerHand[cardIndex] = playerHand[cardIndex] =
         Card(faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id);
     playerHands[user.firebaseId] = playerHand;
-    if (RippleLogic.takeActive(activePile, playerHand)) {
-      drawActivePile(user, activePile, playerHand);
+    if (RippleLogic.allFlipped(playerHand)) {
+      endRound(user, activePile, playerHand);
+    } else if (RippleLogic.takeActive(activePile, playerHand)) {
+      drawActivePile(user, activePile, discardPile, playerHand);
     } else {
-      botDiscardCard(user, activePile, playerHand);
+      botDiscardCard(user, activePile, discardPile, playerHand);
     }
   }
 
@@ -322,6 +325,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     final game = state.asData?.value;
 
     final playerHands = {...game!.playerHands};
+    final discardPile = [...game.discardPile];
     final drawnCard = activePile.removeLast();
     final cardIndex = RippleLogic.playIndex(playerHand, drawnCard);
     activePile.add(Card(
@@ -331,10 +335,13 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     playerHand[cardIndex] = playerHand[cardIndex] =
         Card(faceValue: drawnCard.faceValue, isFlipped: true, id: drawnCard.id);
     playerHands[user.firebaseId] = playerHand;
+    if (RippleLogic.allFlipped(playerHand)) {
+      endRound(user, activePile, playerHand);
+    }
     if (RippleLogic.takeActive(activePile, playerHand)) {
-      drawActivePile(user, activePile, playerHand);
+      drawActivePile(user, activePile, discardPile, playerHand);
     } else {
-      botDiscardCard(user, activePile, playerHand);
+      botDiscardCard(user, activePile, discardPile, playerHand);
     }
   }
 
@@ -389,6 +396,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     final playerHands = {...game.playerHands};
     final activePile = [...game.activePile];
     final drawPile = [...game.drawPile];
+    final discardPile = [...game.discardPile];
     final playerHand = [...playerHands[user.firebaseId]!];
     assert(drawPile.isNotEmpty, "Cannot draw from an empty draw pile");
     // Map.from only does a shallow clone, so we get the same reference
@@ -400,7 +408,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     if (RippleLogic.takeDiscard(activePile, playerHand)) {
       drawActiveDrawPile(user, activePile, playerHand);
     } else {
-      botDiscardCard(user, activePile, playerHand);
+      botDiscardCard(user, activePile, discardPile, playerHand);
     }
   }
 
@@ -446,11 +454,10 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
 
   @override
   Future<void> botDiscardCard(
-      User user, List<Card> activePile, List<Card> playerHand) async {
+      User user, List<Card> activePile, List<Card> discardPile, List<Card> playerHand) async {
     final game = state.asData?.value;
     _checkBasicConditions(user);
     final playerHands = {...game!.playerHands};
-    final discardPile = [...game!.discardPile];
 
     if (activePile.isEmpty) {
       throw CannotDiscardException();
@@ -510,7 +517,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
             playerHands: playerHands,
             activePile: activePile,
             canRipple: canRipple,
-            drawnCard: null,
+            drawnCard: playingCard,
             firstPlay: false,
           ),
         );
@@ -521,7 +528,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
             activePile: activePile,
             discardPile: discardPile,
             canRipple: canRipple,
-            drawnCard: null,
+            drawnCard: playingCard,
             firstPlay: false,
           ),
         );
@@ -539,7 +546,8 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     int oppUpdatedScore;
     var opp =
         game.players.where((player) => player.firebaseId != user.firebaseId);
-    final oppHand = RippleLogic.flipRemaining(playerHands[opp.first.firebaseId]!);
+    final oppHand =
+        RippleLogic.flipRemaining(playerHands[opp.first.firebaseId]!);
     final playerScore = RippleLogic.calculateScore(playerHand);
     final oppScore =
         RippleLogic.calculateScore(playerHands[opp.first.firebaseId]!);
@@ -565,6 +573,8 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
                           : GameStatus.roundEnded,
           currentPlayer: nextPlayer),
     );
+    await Future.delayed(Duration(seconds: 3));
+    await startNewRound();
   }
 
   void _checkCanFlip(int index, List<Card> PlayerHand) {

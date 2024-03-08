@@ -370,7 +370,7 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
               playerHands: playerHands,
               activePile: activePile,
               canRipple: canRipple,
-              drawnCard: null,
+              drawnCard: playingCard,
               firstPlay: false,
             ),
             db);
@@ -381,7 +381,7 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
               activePile: activePile,
               discardPile: discardPile,
               canRipple: canRipple,
-              drawnCard: null,
+              drawnCard: playingCard,
               firstPlay: false,
             ),
             db);
@@ -427,6 +427,8 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
                             : GameStatus.roundEnded,
             currentPlayer: nextPlayer),
         db);
+    await Future.delayed(Duration(seconds: 3));
+    await startNewRound();
   }
 
   @override

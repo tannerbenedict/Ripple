@@ -437,7 +437,7 @@ class RippleLogic {
         (playerHand[2].faceValue == playerHand[3].faceValue &&
             playerHand[2].faceValue == playerHand[7].faceValue &&
             playerHand[2].faceValue == playerHand[8].faceValue) ||
-        (playerHand[3].faceValue == playerHand[7].faceValue &&
+        (playerHand[3].faceValue == playerHand[4].faceValue &&
             playerHand[3].faceValue == playerHand[8].faceValue &&
             playerHand[3].faceValue == playerHand[9].faceValue)) {
       score += -40;

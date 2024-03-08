@@ -81,8 +81,7 @@ class PlayerCard extends HookConsumerWidget {
                       : AspectRatio(
                           aspectRatio: 224 / 312, child: SizedBox.expand()),
                 ).animate(
-                    effects: cardDrawn == null
-                        ? [
+                    effects:  [
                             SlideEffect(
                               begin: Offset(0, currentPlayer == user ? -1 : 1),
                               end: Offset.zero,
@@ -90,7 +89,7 @@ class PlayerCard extends HookConsumerWidget {
                               curve: animationCurve,
                             )
                           ]
-                        : []);
+                        );
               },
             )));
   }

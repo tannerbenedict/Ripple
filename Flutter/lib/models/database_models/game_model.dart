@@ -8,7 +8,7 @@ typedef FirebaseID = String;
 
 enum GameType {
   twoPlayer,
-;
+  ;
 
   String get screenName {
     switch (this) {
@@ -85,6 +85,8 @@ abstract class GameModel {
     }
 
     allCards.shuffle(rng);
+    allCards.shuffle();
+    allCards.shuffle();
 
     return allCards;
   }

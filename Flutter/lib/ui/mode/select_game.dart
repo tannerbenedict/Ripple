@@ -15,7 +15,7 @@ extension GameTypeImage on GameType {
   String get image {
     switch (this) {
       case GameType.twoPlayer:
-        return 'images/tanner.png';
+        return 'images/2players.png';
     }
   }
 }
