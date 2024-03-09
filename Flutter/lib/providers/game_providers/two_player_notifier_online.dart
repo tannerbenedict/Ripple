@@ -111,7 +111,7 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
   }
 
   @override
-  Future<void> flipCards(User user, int count) async {
+  Future<void> flipCards(User user) async {
     //not used online
   }
 

@@ -58,7 +58,9 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     await Future.delayed(botDelay);
 
     if (game.isFirstTurn || game.isSecondTurn) {
-      await flipCards(User.defaultBot(0), 0);
+      await ref
+          .read(twoPlayerSoloNotifierProvider(lobbyCode).notifier)
+          .flipCards(User.defaultBot(0));
       return;
     } else if (RippleLogic.takeDiscard(
       game.discardPile,
@@ -138,7 +140,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
   }
 
   @override
-  Future<void> flipCards(User user, int count) async {
+  Future<void> flipCards(User user) async {
     final game = state.asData?.value;
     _checkBasicConditions(user);
     if ((!game!.isFirstTurn && !game.isSecondTurn)) {
@@ -147,38 +149,32 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     final playerHands = {...game.playerHands};
     final playerHand = [...playerHands[user.firebaseId]!];
     final rand = Random();
-    bool canFlip = false;
-    int randIndex = 0;
-    while (!canFlip) {
-      randIndex = rand.nextInt(playerHand.length);
-      canFlip = _checkCanBotFlip(randIndex, playerHand);
+    List<int> indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for (int i = 0; i < 3; i++) {
+      bool canFlip = false;
+      int randIndex = 0;
+      while (!canFlip) {
+        randIndex = rand.nextInt(indices.length);
+        canFlip = _checkCanBotFlip(randIndex, playerHand);
+      }
+      indices.removeAt(randIndex);
+      playerHand[randIndex] = Card(
+          faceValue: playerHand[randIndex].faceValue,
+          id: playerHand[randIndex].id,
+          isFlipped: true);
     }
-
-    playerHand[randIndex] = Card(
-        faceValue: playerHand[randIndex].faceValue,
-        id: playerHand[randIndex].id,
-        isFlipped: true);
     playerHands[user.firebaseId] = playerHand;
-
     final nextPlayer = game.players[(game.players.indexOf(user) + 1) % 2];
-    if (count < 3) {
-      count++;
-      await _optimisticStateUpdate(game.copyWith(playerHands: playerHands));
-      await Future.delayed(Duration(milliseconds: 500));
-      await flipCards(user, count);
-    }
-    else{
-      await _optimisticStateUpdate(game.copyWith(
-        currentPlayer: nextPlayer,
-        playerHands: playerHands,
-        isFirstTurn: false,
-        // If we're the first player, then we obviously passed. If we're
-        // the second, player the only way we could get this far is if the
-        // first player passed, so, this is always true.
-        isSecondTurn: !game.isSecondTurn,
-      ));
-    }
-    
+
+    await _optimisticStateUpdate(game.copyWith(
+      currentPlayer: nextPlayer,
+      isFirstTurn: false,
+      playerHands: playerHands,
+      // If we're the first player, then we obviously passed. If we're
+      // the second, player the only way we could get this far is if the
+      // first player passed, so, this is always true.
+      isSecondTurn: !game.isSecondTurn,
+    ));
   }
 
   @override
