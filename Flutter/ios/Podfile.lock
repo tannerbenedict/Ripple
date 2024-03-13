@@ -118,7 +118,7 @@ SPEC CHECKSUMS:
   FirebaseAuth: 8d285d9f6e39cc8e23be53a4edd83a923ea629d8
   FirebaseCore: 534544dd98cabcf4bf8598d88ec683b02319a528
   FirebaseCoreInternal: 8eb002e564b533bdcf1ba011f33f2b5c10e2ed4a
-  FirebaseFirestore: 908c26cb057c0147dd61c990da292aee7e605d8e
+  FirebaseFirestore: 53a178f4f4b180da7fcdc64dc6ce776a052f48c5
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   GTMSessionFetcher: e8647203b65cee28c5f73d0f473d096653945e72
@@ -129,4 +129,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 224e547f70e47babc076abf59951e6d2f80d5ce0
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.13.0

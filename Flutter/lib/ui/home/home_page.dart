@@ -26,8 +26,8 @@ class HomePage extends ConsumerWidget {
           image: DecorationImage(
               image:
                   MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? Image.asset("./images/oak_background.jpg").image
-                      : Image.asset("./images/dark_background.jpg").image,
+                      ? Image.asset("./images/oak_background-overlay.jpg").image
+                      : Image.asset("./images/dark_background-overlay.jpg").image,
               fit: BoxFit.cover),
         ),
         child: Scaffold(
@@ -82,9 +82,9 @@ class HomePage extends ConsumerWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Flexible(
-                        child: _buildImageWidget(context),
-                      ),
+                      // Flexible(
+                      //   child: _buildImageWidget(context),
+                      // ),
                       Flexible(
                         child: _buildLogo(context),
                       ),
@@ -139,11 +139,11 @@ class HomePage extends ConsumerWidget {
         ));
   }
 
-  Widget _buildImageWidget(BuildContext context) => Image(
-        image: MediaQuery.of(context).platformBrightness == Brightness.light
-            ? Image.asset("./images/title.png").image
-            : Image.asset("./images/whiteTitle.png").image,
-      );
+  // Widget _buildImageWidget(BuildContext context) => Image(
+  //       image: MediaQuery.of(context).platformBrightness == Brightness.light
+  //           ? Image.asset("./images/title.png").image
+  //           : Image.asset("./images/whiteTitle.png").image,
+  //     );
 
   Widget _buildLogo(BuildContext context) => Image(
         image: MediaQuery.of(context).platformBrightness == Brightness.light

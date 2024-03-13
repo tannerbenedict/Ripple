@@ -20,7 +20,7 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
   GoRouter.optionURLReflectsImperativeAPIs = true;
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp( options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
     await FirebaseAuth.instance.useAuthEmulator(emulatorIpAddress, 9099);
     FirebaseFirestore.instance.useFirestoreEmulator(emulatorIpAddress, 8080);

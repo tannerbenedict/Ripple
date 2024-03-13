@@ -31,6 +31,6 @@
 	<key>GOOGLE_APP_ID</key>
 	<string>1:557279659634:ios:2405c624863eb7ce60a4eb</string>
 	<key>DATABASE_URL</key>
-	<string>https://family-game-night-ed7e6-default-rtdb.firebaseio.com</string>
+	<string>https://ripple-cb017-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>

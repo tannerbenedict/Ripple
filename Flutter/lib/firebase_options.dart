@@ -76,6 +76,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '875809051038',
     projectId: 'ripple-cb017',
     storageBucket: 'ripple-cb017.appspot.com',
-    iosBundleId: 'com.example.familyGameNight',
+    iosBundleId: 'com.example.ripple',
   );
 }

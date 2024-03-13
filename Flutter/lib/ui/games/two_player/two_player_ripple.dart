@@ -86,15 +86,13 @@ class TwoPlayer extends HookConsumerWidget {
                   playersNotPlaying,
                   playersPlaying,
                 ) = data;
+                final sortedScores = (playerScores.entries.toList()
+          ..sort((first, second) => first.value.compareTo(second.value)));
                 if ((gameStatus == GameStatus.finished ||
                         gameStatus == GameStatus.inLobby) &&
                     playersNotPlaying.isEmpty &&
                     playersPlaying.isEmpty) {
-                final opp = playersPlaying
-                    .where((player) => player.firebaseId != user.firebaseId);
-                final playerScore = playerScores[user.firebaseId]!;
-                final oppScore = playerScores[opp.first.firebaseId]!;
-                  if ((playerScore <= -100 || oppScore >= 100) && playerScore < oppScore) {
+                  if (sortedScores.first.key == user.firebaseId) {
                     _showWinnerBox(context, ref);
                   } else {
                     _showLoserBox(context, ref);

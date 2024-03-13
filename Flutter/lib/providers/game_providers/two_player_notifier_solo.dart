@@ -356,7 +356,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     if (RippleLogic.allFlipped(playerHand)) {
       endRound(user, activePile, playerHand);
     }
-    if (RippleLogic.takeActive(activePile, playerHand)) {
+    else if (RippleLogic.takeActive(activePile, playerHand)) {
       await _optimisticStateUpdate(
           game.copyWith(playerHands: playerHands, activePile: activePile));
       await Future.delayed(Duration(seconds: 1));
