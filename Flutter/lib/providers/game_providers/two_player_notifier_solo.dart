@@ -157,7 +157,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
         randIndex = rand.nextInt(indices.length);
         canFlip = _checkCanBotFlip(randIndex, playerHand);
       }
-      indices.removeAt(randIndex);
+      indices.removeWhere((element) => element == randIndex);
       playerHand[randIndex] = Card(
           faceValue: playerHand[randIndex].faceValue,
           id: playerHand[randIndex].id,
@@ -355,8 +355,7 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
     playerHands[user.firebaseId] = playerHand;
     if (RippleLogic.allFlipped(playerHand)) {
       endRound(user, activePile, playerHand);
-    }
-    else if (RippleLogic.takeActive(activePile, playerHand)) {
+    } else if (RippleLogic.takeActive(activePile, playerHand)) {
       await _optimisticStateUpdate(
           game.copyWith(playerHands: playerHands, activePile: activePile));
       await Future.delayed(Duration(seconds: 1));
