@@ -154,10 +154,10 @@ class TwoPlayerSoloNotifier extends _$TwoPlayerSoloNotifier
       bool canFlip = false;
       int randIndex = 0;
       while (!canFlip) {
-        randIndex = rand.nextInt(indices.length);
+        int rando = rand.nextInt(indices.length);
+        randIndex = indices.removeAt(rando);
         canFlip = _checkCanBotFlip(randIndex, playerHand);
       }
-      indices.removeWhere((element) => element == randIndex);
       playerHand[randIndex] = Card(
           faceValue: playerHand[randIndex].faceValue,
           id: playerHand[randIndex].id,
