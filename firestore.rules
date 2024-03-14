@@ -9,30 +9,12 @@ service cloud.firestore {
       allow read: if false;
       allow create, update, read, list: if userId == request.auth.uid;
     }
-    match /gin_rummy_games {
+    match /two_player_games {
       allow read, list: if request.auth != null;
     }
-    match /gin_rummy_games/{ginRummyId} {
+    match /two_player_games/{twoPlayerId} {
       // We'll need to investigate a better way of securing the games
       // so that folks can't just cause havoc everywhere.
-      allow create, update, read, list: if request.auth != null;
-    }
-    match /hearts_games {
-      allow read, list: if request.auth != null;
-    }
-    match /hearts_games/{heartsGameId} {
-      allow create, update, read, list: if request.auth != null;
-    }
-    match /cheat_games {
-      allow read, list: if request.auth != null;
-    }
-    match /cheat_games/{cheatGameId} {
-      allow create, update, read, list: if request.auth != null;
-    }
-    match /scum_games {
-      allow read, list: if request.auth != null;
-    }
-    match /scum_games/{scumGameId} {
       allow create, update, read, list: if request.auth != null;
     }
     match /lobbies {

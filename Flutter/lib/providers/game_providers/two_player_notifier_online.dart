@@ -515,7 +515,7 @@ class TwoPlayerNotifierOnline extends _$TwoPlayerNotifierOnline
           throw CannotRippleException();
         }
       case 8:
-        if (playerHand[9].isFlipped ||
+        if (playerHand[8].isFlipped ||
             (!playerHand[3].isFlipped ||
                 (playerHand[3].isFlipped &&
                     playerHand[3].faceValue != cardValue))) {

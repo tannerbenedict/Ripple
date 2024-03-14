@@ -1,49 +1,7 @@
 {
   "indexes": [
     {
-      "collectionGroup": "gin_rummy_games",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "lobbyCode",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "gameStatus",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "hearts_games",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "lobbyCode",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "gameStatus",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "cheat_games",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "lobbyCode",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "gameStatus",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "scum_games",
+      "collectionGroup": "two_player_games",
       "queryScope": "COLLECTION",
       "fields": [
         {
