@@ -108,6 +108,39 @@ class RippleLogic {
             (!botHand[4].isFlipped && !botHand[9].isFlipped))) {
       return true;
     }
+    if (almostAllFlipped(botHand) &&
+        ((botHand[0].isFlipped &&
+                !botHand[5].isFlipped &&
+                (botHand[0].getCardValue() + discarded < 5 || discarded < botHand[0].getCardValue())) ||
+            (botHand[1].isFlipped &&
+                !botHand[6].isFlipped &&
+                (botHand[1].getCardValue() + discarded < 5 || discarded < botHand[1].getCardValue())) ||
+            (botHand[2].isFlipped &&
+                !botHand[7].isFlipped &&
+                (botHand[2].getCardValue() + discarded < 5|| discarded < botHand[2].getCardValue())) ||
+            (botHand[3].isFlipped &&
+                !botHand[8].isFlipped &&
+                (botHand[3].getCardValue() + discarded < 5|| discarded < botHand[3].getCardValue())) ||
+            (botHand[4].isFlipped &&
+                !botHand[9].isFlipped &&
+                (botHand[4].getCardValue() + discarded < 5|| discarded < botHand[4].getCardValue())) ||
+            (!botHand[0].isFlipped &&
+                botHand[5].isFlipped &&
+                (botHand[5].getCardValue() + discarded < 5|| discarded < botHand[5].getCardValue())) ||
+            (!botHand[1].isFlipped &&
+                botHand[6].isFlipped &&
+                (botHand[6].getCardValue() + discarded < 5|| discarded < botHand[6].getCardValue())) ||
+            (!botHand[2].isFlipped &&
+                botHand[7].isFlipped &&
+                (botHand[7].getCardValue() + discarded < 5|| discarded < botHand[7].getCardValue())) ||
+            (!botHand[3].isFlipped &&
+                botHand[8].isFlipped &&
+                (botHand[8].getCardValue() + discarded < 5|| discarded < botHand[8].getCardValue())) ||
+            (!botHand[4].isFlipped &&
+                botHand[9].isFlipped &&
+                (botHand[9].getCardValue() + discarded < 5|| discarded < botHand[9].getCardValue())))) {
+      return true;
+    }
     return false;
   }
 
@@ -284,6 +317,12 @@ class RippleLogic {
     if (!botHand[4].isFlipped && !botHand[9].isFlipped) {
       return 9;
     }
+    if (lessThanFive(botHand, discarded)) {
+      return endingIndex(botHand);
+    }
+    if(almostAllFlipped(botHand)){
+      return endingIndexLower(botHand);
+    }
     return 10;
   }
 
@@ -349,6 +388,118 @@ class RippleLogic {
       }
     }
     return true;
+  }
+
+  static bool almostAllFlipped(List<Card> playerHand) {
+    int count = 0;
+    for (Card card in playerHand) {
+      if (card.isFlipped) {
+        count++;
+      }
+    }
+    return count == 9;
+  }
+
+  static bool lessThanFive(List<Card> botHand, int discarded) {
+    return (almostAllFlipped(botHand) &&
+        ((botHand[0].isFlipped &&
+                !botHand[5].isFlipped &&
+                botHand[0].getCardValue() + discarded < 5) ||
+            (botHand[1].isFlipped &&
+                !botHand[6].isFlipped &&
+                botHand[1].getCardValue() + discarded < 5) ||
+            (botHand[2].isFlipped &&
+                !botHand[7].isFlipped &&
+                botHand[2].getCardValue() + discarded < 5) ||
+            (botHand[3].isFlipped &&
+                !botHand[8].isFlipped &&
+                botHand[3].getCardValue() + discarded < 5) ||
+            (botHand[4].isFlipped &&
+                !botHand[9].isFlipped &&
+                botHand[4].getCardValue() + discarded < 5) ||
+            (!botHand[0].isFlipped &&
+                botHand[5].isFlipped &&
+                botHand[5].getCardValue() + discarded < 5) ||
+            (!botHand[1].isFlipped &&
+                botHand[6].isFlipped &&
+                botHand[6].getCardValue() + discarded < 5) ||
+            (!botHand[2].isFlipped &&
+                botHand[7].isFlipped &&
+                botHand[7].getCardValue() + discarded < 5) ||
+            (!botHand[3].isFlipped &&
+                botHand[8].isFlipped &&
+                botHand[8].getCardValue() + discarded < 5) ||
+            (!botHand[4].isFlipped &&
+                botHand[9].isFlipped &&
+                botHand[9].getCardValue() + discarded < 5)));
+  }
+
+  static int endingIndex(List<Card> botHand) {
+    if (!botHand[0].isFlipped) {
+      return 0;
+    }
+    if (!botHand[1].isFlipped) {
+      return 1;
+    }
+    if (!botHand[2].isFlipped) {
+      return 2;
+    }
+    if (!botHand[3].isFlipped) {
+      return 3;
+    }
+    if (!botHand[4].isFlipped) {
+      return 4;
+    }
+    if (!botHand[5].isFlipped) {
+      return 5;
+    }
+    if (!botHand[6].isFlipped) {
+      return 6;
+    }
+    if (!botHand[7].isFlipped) {
+      return 7;
+    }
+    if (!botHand[8].isFlipped) {
+      return 8;
+    }
+    if (!botHand[9].isFlipped) {
+      return 9;
+    }
+    return 10;
+  }
+
+  static int endingIndexLower(List<Card> botHand) {
+    if (botHand[0].isFlipped && !botHand[5].isFlipped) {
+      return 0;
+    }
+    if (botHand[1].isFlipped&& !botHand[6].isFlipped) {
+      return 1;
+    }
+    if (botHand[2].isFlipped&& !botHand[7].isFlipped) {
+      return 2;
+    }
+    if (botHand[3].isFlipped&& !botHand[8].isFlipped) {
+      return 3;
+    }
+    if (botHand[4].isFlipped&& !botHand[9].isFlipped) {
+      return 4;
+    }
+    if (botHand[5].isFlipped&& !botHand[0].isFlipped) {
+      return 5;
+    }
+    if (botHand[6].isFlipped&& !botHand[1].isFlipped) {
+      return 6;
+    }
+    if (botHand[7].isFlipped&& !botHand[2].isFlipped) {
+      return 7;
+    }
+    if (botHand[8].isFlipped&& !botHand[3].isFlipped) {
+      return 8;
+    }
+    if (botHand[9].isFlipped&& !botHand[4].isFlipped) {
+      return 9;
+    }
+    return 10;
   }
 
   static int calculateScore(List<Card> playerHand) {
