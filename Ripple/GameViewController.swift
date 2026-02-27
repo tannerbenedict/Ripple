@@ -942,10 +942,16 @@ class GameViewController: UIViewController {
                 // Gather face-up cards that are NOT in a matching column, with their point value
                 var candidates: [(index: Int, value: Int)] = []
                 for col in 0..<5 where !colIsMatch[col] {
-                    // Check that adjacent columns are NOT matching pairs
-                    let leftMatch  = (col > 0) ? colIsMatch[col - 1] : false
-                    let rightMatch = (col < 4) ? colIsMatch[col + 1] : false
-                    if leftMatch || rightMatch { continue }
+                    // Skip only if an adjacent matching-pair column contains the same card as the drawn card
+                    let leftSameMatch: Bool = {
+                        guard col > 0, colIsMatch[col - 1] else { return false }
+                        return aiCardsMatch(card, player.cards[col - 1])
+                    }()
+                    let rightSameMatch: Bool = {
+                        guard col < 4, colIsMatch[col + 1] else { return false }
+                        return aiCardsMatch(card, player.cards[col + 1])
+                    }()
+                    if leftSameMatch || rightSameMatch { continue }
 
                     for idx in [col, col + 5] {
                         guard player.faceUp[idx] else { continue }
