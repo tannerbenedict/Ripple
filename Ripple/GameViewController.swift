@@ -1350,6 +1350,7 @@ class GameViewController: UIViewController {
         playerCardViews = Array(repeating: [], count: totalPlayers)
         playerIconViews = Array(repeating: UIImageView(), count: totalPlayers)
         playerScoreLabels = Array(repeating: UILabel(), count: totalPlayers)
+        playerBoardContainers = Array(repeating: UIView(), count: totalPlayers)
 
         let screenW = view.bounds.width
         let screenH = view.bounds.height
@@ -1474,7 +1475,7 @@ class GameViewController: UIViewController {
             let board = makeBoard(playerIndex: playerIdx, cw: btm.cardW, ch: btm.cardH, bw: btm.boardW, bh: btm.boardH)
             board.center = CGPoint(x: centerX, y: screenH - safe.bottom - btm.boardH / 2 - 2)
             view.addSubview(board)
-            playerBoardContainers.append(board)
+            playerBoardContainers[playerIdx] = board
         }
 
         // TOP (opponents across from human)
@@ -1486,7 +1487,7 @@ class GameViewController: UIViewController {
                 let board = makeBoard(playerIndex: playerIdx, cw: topSz.cardW, ch: topSz.cardH, bw: topSz.boardW, bh: topSz.boardH)
                 board.center = CGPoint(x: topX, y: topY)
                 view.addSubview(board)
-                playerBoardContainers.append(board)
+                playerBoardContainers[playerIdx] = board
                 topX += topSz.boardW + 10
             }
         }
@@ -1500,7 +1501,7 @@ class GameViewController: UIViewController {
                 let board = makeBoard(playerIndex: playerIdx, cw: sideSz.cardW, ch: sideSz.cardH, bw: sideSz.boardW, bh: sideSz.boardH)
                 board.center = CGPoint(x: leftX, y: leftY)
                 view.addSubview(board)
-                playerBoardContainers.append(board)
+                playerBoardContainers[playerIdx] = board
                 leftY += sideSz.boardH + 10
             }
         }
@@ -1514,7 +1515,7 @@ class GameViewController: UIViewController {
                 let board = makeBoard(playerIndex: playerIdx, cw: sideSz.cardW, ch: sideSz.cardH, bw: sideSz.boardW, bh: sideSz.boardH)
                 board.center = CGPoint(x: rightX, y: rightY)
                 view.addSubview(board)
-                playerBoardContainers.append(board)
+                playerBoardContainers[playerIdx] = board
                 rightY += sideSz.boardH + 10
             }
         }
