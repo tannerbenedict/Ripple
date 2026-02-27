@@ -78,8 +78,11 @@ class ViewController: UIViewController {
         return iv
     }()
 
+    override var prefersHomeIndicatorAutoHidden: Bool { true }
+
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .black
+        view.insetsLayoutMarginsFromSafeArea = false
 
         view.addSubview(backgroundImageView)
         NSLayoutConstraint.activate([

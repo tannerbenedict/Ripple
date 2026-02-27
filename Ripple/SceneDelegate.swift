@@ -20,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Show splash screen first
         let splashVC = UIViewController()
         splashVC.view.backgroundColor = .black
+        splashVC.view.insetsLayoutMarginsFromSafeArea = false
         let splashImageView = UIImageView(image: UIImage(named: "splash_screen"))
         splashImageView.contentMode = .scaleAspectFill
         splashImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,6 +41,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let mainVC = ViewController()
             mainVC.view.alpha = 0
             window.rootViewController = mainVC
+            // Ensure window content extends to all edges (no black bars)
+            if #available(iOS 16.0, *) {
+                windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscape))
+            }
             UIView.animate(withDuration: 0.4) {
                 mainVC.view.alpha = 1
             }
