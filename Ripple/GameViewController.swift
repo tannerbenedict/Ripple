@@ -259,7 +259,7 @@ class GameViewController: UIViewController {
         beginTurn()
     }
 
-    /// Highlight the icon of the player whose turn it is.
+    /// Highlight the icon and board container of the player whose turn it is.
     private func highlightCurrentPlayer() {
         for (index, iconView) in playerIconViews.enumerated() {
             if index == game.currentPlayerIndex {
@@ -271,6 +271,20 @@ class GameViewController: UIViewController {
             } else {
                 iconView.tintColor = .systemBlue
                 iconView.layer.shadowOpacity = 0
+            }
+        }
+
+        for (index, container) in playerBoardContainers.enumerated() {
+            if index == game.currentPlayerIndex {
+                container.layer.borderColor = UIColor.systemGreen.cgColor
+                container.layer.borderWidth = 2
+                container.layer.shadowColor = UIColor.systemGreen.cgColor
+                container.layer.shadowRadius = 8
+                container.layer.shadowOpacity = 0.7
+                container.layer.shadowOffset = .zero
+            } else {
+                container.layer.borderWidth = 0
+                container.layer.shadowOpacity = 0
             }
         }
     }
@@ -1392,6 +1406,7 @@ class GameViewController: UIViewController {
             let container = UIView(frame: CGRect(x: 0, y: 0, width: bw, height: bh))
             container.backgroundColor = UIColor.black.withAlphaComponent(0.3)
             container.layer.cornerRadius = 8
+            container.clipsToBounds = false
 
             let player = game.players[playerIndex]
 
