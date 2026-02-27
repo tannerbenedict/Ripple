@@ -785,6 +785,77 @@ class GameViewController: UIViewController {
         }
     }
 
+    /// Would discarding this card help the next player? Returns true if
+    /// the next player has a face-up card that matches it and whose column partner is not yet matched.
+    private func aiDiscardHelpsNextPlayer(_ card: Card) -> Bool {
+        let nextIndex = (game.currentPlayerIndex + 1) % game.players.count
+        let next = game.players[nextIndex]
+        for i in 0..<next.cards.count {
+            guard next.faceUp[i] else { continue }
+            guard aiCardsMatch(card, next.cards[i]) else { continue }
+            let partner = next.partnerIndex(of: i)
+            // If the partner is already a match the card won't help them
+            if next.faceUp[partner] && aiCardsMatch(next.cards[i], next.cards[partner]) {
+                continue
+            }
+            return true
+        }
+        return false
+    }
+
+    /// Find a safe grid index to dump a card the AI doesn't want to discard.
+    /// Prefers a fully-blind column; otherwise replaces the face-up card in a
+    /// half-flipped column, as long as neither adjacent column is a matching pair
+    /// (to preserve adjacency bonus potential).
+    private func aiSafeDumpIndex(for card: Card, player: Player) -> Int? {
+        // Build column-match info
+        var colIsMatch = Array(repeating: false, count: 5)
+        for col in 0..<5 {
+            let t = col, b = col + 5
+            if player.faceUp[t] && player.faceUp[b] && aiCardsMatch(player.cards[t], player.cards[b]) {
+                colIsMatch[col] = true
+            }
+        }
+
+        // Option A: fully-blind column (both face-down) — prefer these
+        for col in 0..<5 {
+            if !player.faceUp[col] && !player.faceUp[col + 5] {
+                // Skip if an adjacent column is a matching pair (could ruin adjacency)
+                let leftMatch  = (col > 0) ? colIsMatch[col - 1] : false
+                let rightMatch = (col < 4) ? colIsMatch[col + 1] : false
+                if leftMatch || rightMatch { continue }
+                return col  // place in top slot
+            }
+        }
+
+        // Option B: half-flipped column — replace the face-up card
+        var candidates: [(index: Int, value: Int)] = []
+        for col in 0..<5 where !colIsMatch[col] {
+            let t = col, b = col + 5
+            let topUp = player.faceUp[t]
+            let botUp = player.faceUp[b]
+            // Exactly one face-up
+            guard topUp != botUp else { continue }
+            // Skip if an adjacent column is a matching pair
+            let leftMatch  = (col > 0) ? colIsMatch[col - 1] : false
+            let rightMatch = (col < 4) ? colIsMatch[col + 1] : false
+            if leftMatch || rightMatch { continue }
+            let faceUpIdx = topUp ? t : b
+            let val = Game.cardPointValue(player.cards[faceUpIdx])
+            // Only replace if the face-up card is worse (higher points) than the drawn card
+            if val > Game.cardPointValue(card) {
+                candidates.append((index: faceUpIdx, value: val))
+            }
+        }
+
+        // Pick the highest-value face-up card to replace
+        if let best = candidates.max(by: { $0.value < $1.value }) {
+            return best.index
+        }
+
+        return nil  // no safe spot — AI will discard anyway
+    }
+
     /// Determine where the AI should place a card, or nil if it should discard.
     /// Rules (checked in order):
     ///  1. Card matches a face-up card → place at its partner to complete the column.
@@ -833,6 +904,58 @@ class GameViewController: UIViewController {
                 if !player.faceUp[top] && !player.faceUp[bot] {
                     return top
                 }
+            }
+        }
+
+        // Rule 4: card is zero-value (7/11/ripple), no fully-unflipped columns remain,
+        // replace the highest face-up non-matching card whose adjacent columns aren't matching pairs.
+        if aiIsZeroValue(card) {
+            // Check that no column has both cards face-down
+            let hasFullyBlindColumn = (0..<5).contains { col in
+                !player.faceUp[col] && !player.faceUp[col + 5]
+            }
+
+            if !hasFullyBlindColumn {
+                // Build info about each column
+                var colIsMatch = Array(repeating: false, count: 5)
+                for col in 0..<5 {
+                    let t = col, b = col + 5
+                    if player.faceUp[t] && player.faceUp[b] && aiCardsMatch(player.cards[t], player.cards[b]) {
+                        colIsMatch[col] = true
+                    }
+                }
+
+                // Gather face-up cards that are NOT in a matching column, with their point value
+                var candidates: [(index: Int, value: Int)] = []
+                for col in 0..<5 where !colIsMatch[col] {
+                    // Check that adjacent columns are NOT matching pairs
+                    let leftMatch  = (col > 0) ? colIsMatch[col - 1] : false
+                    let rightMatch = (col < 4) ? colIsMatch[col + 1] : false
+                    if leftMatch || rightMatch { continue }
+
+                    for idx in [col, col + 5] {
+                        guard player.faceUp[idx] else { continue }
+                        let val = Game.cardPointValue(player.cards[idx])
+                        if val > 0 {
+                            candidates.append((index: idx, value: val))
+                        }
+                    }
+                }
+
+                // Pick the highest-value candidate
+                if let best = candidates.max(by: { $0.value < $1.value }) {
+                    return best.index
+                }
+            }
+        }
+
+        // Rule 5: Discarding this card would give the next player a matching bonus.
+        // If so, place it in our grid instead — in a fully-blind column or replacing
+        // the face-up card in a half-flipped column — as long as it doesn't hurt
+        // our adjacency bonus chances.
+        if aiDiscardHelpsNextPlayer(card) {
+            if let safeIdx = aiSafeDumpIndex(for: card, player: player) {
+                return safeIdx
             }
         }
 
