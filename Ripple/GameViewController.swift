@@ -148,10 +148,6 @@ class GameViewController: UIViewController {
         drawnCardView.isHidden = true
         pileContainer.addSubview(drawnCardView)
 
-        drawnCardLabel.text = "Your draw"
-        drawnCardLabel.font = UIFont.systemFont(ofSize: 10, weight: .medium)
-        drawnCardLabel.textColor = .secondaryLabel
-        drawnCardLabel.textAlignment = .center
         drawnCardLabel.translatesAutoresizingMaskIntoConstraints = false
         drawnCardLabel.isHidden = true
         pileContainer.addSubview(drawnCardLabel)
@@ -232,15 +228,12 @@ class GameViewController: UIViewController {
     private func showDrawnCard(_ card: Card) {
         drawnCardView.configure(with: card, faceUp: true)
         drawnCardView.isHidden = false
-        drawnCardLabel.isHidden = false
-        drawnCardLabel.text = "Current"
         keepButton.isHidden = true  // replaced by tapping a card
         discardButton.isHidden = false
     }
 
     private func hideDrawnCard() {
         drawnCardView.isHidden = true
-        drawnCardLabel.isHidden = true
         keepButton.isHidden = true
         discardButton.isHidden = true
     }
@@ -622,15 +615,15 @@ class GameViewController: UIViewController {
             targetCardView.configure(with: drawnCard, faceUp: true)
 
             if wasFaceUp {
-                // Replaced a face-up card → animate old card to discard
-                let discardTo = self.centerInMainView(of: self.discardPileView)
-                self.animateCardFly(card: oldCard, startFaceUp: true, from: to, to: discardTo) { [weak self] in
+                // Replaced a face-up card → animate old card to drawn area, require manual discard
+                let drawnTo = self.centerInMainView(of: self.drawnCardView)
+                self.animateCardFly(card: oldCard, startFaceUp: true, from: to, to: drawnTo) { [weak self] in
                     guard let self = self else { return }
-                    self.game.discard(oldCard)
-                    self.updateDiscardPileView()
-                    self.discardPileView.alpha = 1.0
+                    self.showDrawnCard(oldCard)
+                    self.rippleCard = oldCard
+                    self.rippleTargets = []
+                    self.awaitingRipplePlacement = true
                     self.inputLocked = false
-                    self.advanceTurn()
                 }
             } else {
                 // Replaced a face-down card → animate old card to drawn area then offer ripple
@@ -663,30 +656,15 @@ class GameViewController: UIViewController {
         }
 
         if targets.isEmpty {
-            // No ripple possible — show card briefly, then animate to discard
-            let from = centerInMainView(of: drawnCardView)
-            let discardTo = centerInMainView(of: discardPileView)
-
+            // No ripple possible — show card and wait for player to press Discard
             showDrawnCard(revealedCard)
-            drawnCardLabel.text = "No ripple"
-            discardButton.isHidden = true
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
-                guard let self = self else { return }
-                self.hideDrawnCard()
-                self.animateCardFly(card: revealedCard, startFaceUp: true, from: from, to: discardTo) { [weak self] in
-                    guard let self = self else { return }
-                    self.game.discard(revealedCard)
-                    self.updateDiscardPileView()
-                    self.discardPileView.alpha = 1.0
-                    self.inputLocked = false
-                    self.advanceTurn()
-                }
-            }
+            rippleCard = revealedCard
+            rippleTargets = []
+            awaitingRipplePlacement = true
+            inputLocked = false
         } else {
             // Show the revealed card in the drawn-card area
             showDrawnCard(revealedCard)
-            drawnCardLabel.text = "Ripple! Tap a target"
 
             // Store ripple state
             rippleCard = revealedCard
@@ -783,6 +761,89 @@ class GameViewController: UIViewController {
         }
     }
 
+    // MARK: - AI Decision Helpers
+
+    /// Whether two cards are considered equivalent by the AI.
+    /// 7, 11, and ripple are all worth 0 points, so the AI treats them as interchangeable.
+    private func aiCardsMatch(_ a: Card, _ b: Card) -> Bool {
+        if a == b { return true }
+        let aIsZero = aiIsZeroValue(a)
+        let bIsZero = aiIsZeroValue(b)
+        return aIsZero && bIsZero
+    }
+
+    /// Whether a card scores 0 points (7, 11, or ripple).
+    private func aiIsZeroValue(_ card: Card) -> Bool {
+        switch card {
+        case .number(7), .number(11): return true
+        case .ripple: return true
+        default: return false
+        }
+    }
+
+    /// Whether a card is "low value" — the AI is willing to place it in a blind column.
+    /// Low value: 1, 2, 3, 4, 7, 11, ripple.
+    private func aiIsLowValue(_ card: Card) -> Bool {
+        switch card {
+        case .number(let v): return v <= 4 || v == 7 || v == 11
+        case .ripple: return true
+        }
+    }
+
+    /// Determine where the AI should place a card, or nil if it should discard.
+    /// Rules (checked in order):
+    ///  1. Card matches a face-up card → place at its partner to complete the column.
+    ///  3. Card matches an adjacent complete matching column, and the column next to it is fully unflipped → place there.
+    ///  2. Card is low-value and there's a column with no cards flipped → place there.
+    private func aiFindPlacement(for card: Card, player: Player) -> Int? {
+        // Rule 1: match a face-up card — place at the partner position
+        for i in 0..<player.cards.count {
+            guard player.faceUp[i] else { continue }
+            guard aiCardsMatch(card, player.cards[i]) else { continue }
+
+            let partner = player.partnerIndex(of: i)
+            // Don't place if the column is already a "match" (both zero-value or identical)
+            if player.faceUp[partner] && aiCardsMatch(player.cards[i], player.cards[partner]) {
+                continue
+            }
+            return partner
+        }
+
+        // Rule 3: card matches an adjacent complete matching column; place in the neighboring unflipped column
+        for col in 0..<5 {
+            let top = col
+            let bot = col + 5
+            // Column must be a complete matching pair
+            guard player.faceUp[top] && player.faceUp[bot] else { continue }
+            guard aiCardsMatch(player.cards[top], player.cards[bot]) else { continue }
+            // Card must match that column
+            guard aiCardsMatch(card, player.cards[top]) else { continue }
+
+            // Check adjacent columns for being fully unflipped
+            for adjCol in [col - 1, col + 1] {
+                guard adjCol >= 0 && adjCol < 5 else { continue }
+                let adjTop = adjCol
+                let adjBot = adjCol + 5
+                if !player.faceUp[adjTop] && !player.faceUp[adjBot] {
+                    return adjTop
+                }
+            }
+        }
+
+        // Rule 2: card is low-value and there's a fully unflipped column
+        if aiIsLowValue(card) {
+            for col in 0..<5 {
+                let top = col
+                let bot = col + 5
+                if !player.faceUp[top] && !player.faceUp[bot] {
+                    return top
+                }
+            }
+        }
+
+        return nil  // Discard
+    }
+
     // MARK: - AI Main Turn
 
     private func performAIMainTurn() {
@@ -792,70 +853,118 @@ class GameViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
             guard let self = self else { return }
 
-            // AI draws from the deck
-            guard let card = self.game.drawFromDeck() else { return }
-            self.game.drawnCard = nil
-            self.game.hasDrawnCard = false
+            // Step 1: Check if AI should take from discard pile
+            if let discardCard = self.game.topDiscard,
+               let targetIdx = self.aiFindPlacement(for: discardCard, player: player) {
+                // Take from discard pile
+                guard let card = self.game.drawFromDiscard() else { return }
+                self.game.drawnCard = nil
+                self.game.hasDrawnCard = false
 
-            // Animate draw pile → drawn card area
-            let drawFrom = self.centerInMainView(of: self.drawPileView)
-            let drawnTo = self.centerInMainView(of: self.drawnCardView)
+                let discardFrom = self.centerInMainView(of: self.discardPileView)
+                let drawnTo = self.centerInMainView(of: self.drawnCardView)
+                self.updateDiscardPileView()
 
-            self.animateCardFly(card: card, startFaceUp: false, from: drawFrom, to: drawnTo, flipToFaceUp: true) { [weak self] in
-                guard let self = self else { return }
-                // Show drawn card in pile area (no buttons for AI)
-                self.showDrawnCard(card)
-                self.drawnCardLabel.text = "\(player.name)'s draw"
-                self.discardButton.isHidden = true
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                // Animate discard → drawn area (already face-up)
+                self.animateCardFly(card: card, startFaceUp: true, from: discardFrom, to: drawnTo) { [weak self] in
                     guard let self = self else { return }
+                    self.showDrawnCard(card)
+                    self.discardButton.isHidden = true
 
-                    let faceDownIndices = (0..<player.cards.count).filter { !player.faceUp[$0] }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        guard let self = self else { return }
+                        self.aiPlaceCard(card, at: targetIdx, playerIndex: playerIndex, player: player)
+                    }
+                }
+            } else {
+                // Step 2: Draw from deck
+                guard let card = self.game.drawFromDeck() else { return }
+                self.game.drawnCard = nil
+                self.game.hasDrawnCard = false
 
-                    if let targetIdx = faceDownIndices.randomElement() {
-                        let targetCardView = self.playerCardViews[playerIndex][targetIdx]
-                        let gridTo = self.centerInMainView(of: targetCardView)
+                let drawFrom = self.centerInMainView(of: self.drawPileView)
+                let drawnTo = self.centerInMainView(of: self.drawnCardView)
 
-                        // Animate drawn card → grid
-                        self.hideDrawnCard()
-                        self.animateCardFly(card: card, startFaceUp: true, from: drawnTo, to: gridTo) { [weak self] in
-                            guard let self = self else { return }
-                            let oldCard = player.replaceCard(at: targetIdx, with: card)
-                            targetCardView.configure(with: card, faceUp: true)
+                self.animateCardFly(card: card, startFaceUp: false, from: drawFrom, to: drawnTo, flipToFaceUp: true) { [weak self] in
+                    guard let self = self else { return }
+                    self.showDrawnCard(card)
+                    self.discardButton.isHidden = true
 
-                            // Animate old card → drawn area (flip face-up)
-                            self.animateCardFly(card: oldCard, startFaceUp: false, from: gridTo, to: drawnTo, flipToFaceUp: true) { [weak self] in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        guard let self = self else { return }
+
+                        // Check if the drawn card meets placement conditions
+                        if let targetIdx = self.aiFindPlacement(for: card, player: player) {
+                            self.aiPlaceCard(card, at: targetIdx, playerIndex: playerIndex, player: player)
+                        } else {
+                            // Discard the drawn card without replacing
+                            let discardTo = self.centerInMainView(of: self.discardPileView)
+                            self.hideDrawnCard()
+                            self.animateCardFly(card: card, startFaceUp: true, from: drawnTo, to: discardTo) { [weak self] in
                                 guard let self = self else { return }
-                                self.showDrawnCard(oldCard)
-                                self.drawnCardLabel.text = "Revealed"
-                                self.discardButton.isHidden = true
+                                self.game.discard(card)
+                                self.updateDiscardPileView()
+                                self.discardPileView.alpha = 1.0
 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                    self.hideDrawnCard()
-                                    self.aiPerformRippleChain(playerIndex: playerIndex, revealedCard: oldCard, fromIndex: targetIdx)
+                                if self.game.isFirstTurn {
+                                    self.game.firstPlayerUsedBonusDraw = true
+                                    self.aiBonusDraw(playerIndex: playerIndex)
+                                } else {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        self.advanceTurn()
+                                    }
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /// AI places a card at the target index with full animation (card → grid, old card → drawn, then ripple chain).
+    private func aiPlaceCard(_ card: Card, at targetIdx: Int, playerIndex: Int, player: Player) {
+        let drawnTo = centerInMainView(of: drawnCardView)
+        let targetCardView = playerCardViews[playerIndex][targetIdx]
+        let gridTo = centerInMainView(of: targetCardView)
+
+        // Capture face-up state BEFORE replacement
+        let wasFaceUp = player.faceUp[targetIdx]
+
+        hideDrawnCard()
+        animateCardFly(card: card, startFaceUp: true, from: drawnTo, to: gridTo) { [weak self] in
+            guard let self = self else { return }
+            let oldCard = player.replaceCard(at: targetIdx, with: card)
+            targetCardView.configure(with: card, faceUp: true)
+
+            if wasFaceUp {
+                // Replaced a face-up card → animate old card to discard, end turn
+                let discardTo = self.centerInMainView(of: self.discardPileView)
+                self.animateCardFly(card: oldCard, startFaceUp: true, from: gridTo, to: discardTo) { [weak self] in
+                    guard let self = self else { return }
+                    self.game.discard(oldCard)
+                    self.updateDiscardPileView()
+                    self.discardPileView.alpha = 1.0
+
+                    if self.game.isFirstTurn {
+                        self.game.firstPlayerUsedBonusDraw = true
+                        self.aiBonusDraw(playerIndex: playerIndex)
                     } else {
-                        // All face-up: animate to discard
-                        let discardTo = self.centerInMainView(of: self.discardPileView)
-                        self.hideDrawnCard()
-                        self.animateCardFly(card: card, startFaceUp: true, from: drawnTo, to: discardTo) { [weak self] in
-                            guard let self = self else { return }
-                            self.game.discard(card)
-                            self.updateDiscardPileView()
-                            self.discardPileView.alpha = 1.0
-
-                            if self.game.isFirstTurn {
-                                self.game.firstPlayerUsedBonusDraw = true
-                                self.aiBonusDraw(playerIndex: playerIndex)
-                            } else {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    self.advanceTurn()
-                                }
-                            }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            self.advanceTurn()
                         }
+                    }
+                }
+            } else {
+                // Replaced a face-down card → animate old card to drawn area, then ripple chain
+                self.animateCardFly(card: oldCard, startFaceUp: false, from: gridTo, to: drawnTo, flipToFaceUp: true) { [weak self] in
+                    guard let self = self else { return }
+                    self.showDrawnCard(oldCard)
+                    self.discardButton.isHidden = true
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        self.hideDrawnCard()
+                        self.aiPerformRippleChain(playerIndex: playerIndex, revealedCard: oldCard, fromIndex: targetIdx)
                     }
                 }
             }
@@ -886,7 +995,6 @@ class GameViewController: UIViewController {
 
             // Show ripple card in drawn area
             showDrawnCard(revealedCard)
-            drawnCardLabel.text = "Ripple!"
             discardButton.isHidden = true
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
@@ -903,7 +1011,6 @@ class GameViewController: UIViewController {
                     self.animateCardFly(card: nextOldCard, startFaceUp: false, from: gridTo, to: drawnPos, flipToFaceUp: true) { [weak self] in
                         guard let self = self else { return }
                         self.showDrawnCard(nextOldCard)
-                        self.drawnCardLabel.text = "Revealed"
                         self.discardButton.isHidden = true
 
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
@@ -919,7 +1026,6 @@ class GameViewController: UIViewController {
             let discardTo = centerInMainView(of: discardPileView)
 
             showDrawnCard(revealedCard)
-            drawnCardLabel.text = "No ripple"
             discardButton.isHidden = true
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
@@ -945,65 +1051,71 @@ class GameViewController: UIViewController {
         }
     }
 
-    /// AI first-player bonus draw — animated.
+    /// AI first-player bonus draw — animated with smart decision logic.
     private func aiBonusDraw(playerIndex: Int) {
         let player = game.players[playerIndex]
         game.hasDrawnCard = false
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             guard let self = self else { return }
-            guard let card = self.game.drawFromDeck() else {
-                self.advanceTurn()
-                return
-            }
-            self.game.drawnCard = nil
-            self.game.hasDrawnCard = false
 
-            let drawFrom = self.centerInMainView(of: self.drawPileView)
-            let drawnTo = self.centerInMainView(of: self.drawnCardView)
+            // Check discard pile first
+            if let discardCard = self.game.topDiscard,
+               let targetIdx = self.aiFindPlacement(for: discardCard, player: player) {
+                guard let card = self.game.drawFromDiscard() else {
+                    self.advanceTurn()
+                    return
+                }
+                self.game.drawnCard = nil
+                self.game.hasDrawnCard = false
 
-            self.animateCardFly(card: card, startFaceUp: false, from: drawFrom, to: drawnTo, flipToFaceUp: true) { [weak self] in
-                guard let self = self else { return }
-                self.showDrawnCard(card)
-                self.drawnCardLabel.text = "\(player.name)'s draw"
-                self.discardButton.isHidden = true
+                let discardFrom = self.centerInMainView(of: self.discardPileView)
+                let drawnTo = self.centerInMainView(of: self.drawnCardView)
+                self.updateDiscardPileView()
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self.animateCardFly(card: card, startFaceUp: true, from: discardFrom, to: drawnTo) { [weak self] in
                     guard let self = self else { return }
+                    self.showDrawnCard(card)
+                    self.discardButton.isHidden = true
 
-                    let faceDownIndices = (0..<player.cards.count).filter { !player.faceUp[$0] }
-                    if let targetIdx = faceDownIndices.randomElement() {
-                        let targetCardView = self.playerCardViews[playerIndex][targetIdx]
-                        let gridTo = self.centerInMainView(of: targetCardView)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        guard let self = self else { return }
+                        self.aiPlaceCard(card, at: targetIdx, playerIndex: playerIndex, player: player)
+                    }
+                }
+            } else {
+                // Draw from deck
+                guard let card = self.game.drawFromDeck() else {
+                    self.advanceTurn()
+                    return
+                }
+                self.game.drawnCard = nil
+                self.game.hasDrawnCard = false
 
-                        self.hideDrawnCard()
-                        self.animateCardFly(card: card, startFaceUp: true, from: drawnTo, to: gridTo) { [weak self] in
-                            guard let self = self else { return }
-                            let oldCard = player.replaceCard(at: targetIdx, with: card)
-                            targetCardView.configure(with: card, faceUp: true)
+                let drawFrom = self.centerInMainView(of: self.drawPileView)
+                let drawnTo = self.centerInMainView(of: self.drawnCardView)
 
-                            self.animateCardFly(card: oldCard, startFaceUp: false, from: gridTo, to: drawnTo, flipToFaceUp: true) { [weak self] in
+                self.animateCardFly(card: card, startFaceUp: false, from: drawFrom, to: drawnTo, flipToFaceUp: true) { [weak self] in
+                    guard let self = self else { return }
+                    self.showDrawnCard(card)
+                    self.discardButton.isHidden = true
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        guard let self = self else { return }
+
+                        if let targetIdx = self.aiFindPlacement(for: card, player: player) {
+                            self.aiPlaceCard(card, at: targetIdx, playerIndex: playerIndex, player: player)
+                        } else {
+                            let discardTo = self.centerInMainView(of: self.discardPileView)
+                            self.hideDrawnCard()
+                            self.animateCardFly(card: card, startFaceUp: true, from: drawnTo, to: discardTo) { [weak self] in
                                 guard let self = self else { return }
-                                self.showDrawnCard(oldCard)
-                                self.drawnCardLabel.text = "Revealed"
-                                self.discardButton.isHidden = true
-
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                    self.hideDrawnCard()
-                                    self.aiPerformRippleChain(playerIndex: playerIndex, revealedCard: oldCard, fromIndex: targetIdx)
+                                self.game.discard(card)
+                                self.updateDiscardPileView()
+                                self.discardPileView.alpha = 1.0
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    self.advanceTurn()
                                 }
-                            }
-                        }
-                    } else {
-                        let discardTo = self.centerInMainView(of: self.discardPileView)
-                        self.hideDrawnCard()
-                        self.animateCardFly(card: card, startFaceUp: true, from: drawnTo, to: discardTo) { [weak self] in
-                            guard let self = self else { return }
-                            self.game.discard(card)
-                            self.updateDiscardPileView()
-                            self.discardPileView.alpha = 1.0
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                self.advanceTurn()
                             }
                         }
                     }
