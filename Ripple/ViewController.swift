@@ -148,7 +148,9 @@ class ViewController: UIViewController {
     }
 
     @objc private func friendsTapped() {
-        // TODO: Navigate to friends list screen
+        let alert = UIAlertController(title: "Coming Soon", message: "Friends feature is coming soon!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 
     private var selectedOpponentCount = 1
@@ -199,7 +201,9 @@ class ViewController: UIViewController {
     }
 
     @objc private func playWithFriendsTapped() {
-        // TODO: Navigate to play with friends mode
+        let alert = UIAlertController(title: "Coming Soon", message: "Play with Friends is coming soon!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 
     // MARK: - Game Launch
