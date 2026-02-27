@@ -15,8 +15,7 @@ class GameViewController: UIViewController {
     private var playerCardViews: [[CardView]] = []   // one array of 10 CardViews per player
     private var playerIconViews: [UIImageView] = []  // icon view per player for highlighting
     private var playerScoreLabels: [UILabel] = []    // cumulative score label per player
-    private let topContainer = UIView()      // opponent boards
-    private let bottomContainer = UIView()   // human player board
+    private var playerBoardContainers: [UIView] = []
 
     // Draw / discard pile views
     private let drawPileView = CardView()
@@ -30,6 +29,7 @@ class GameViewController: UIViewController {
     private let drawnCardLabel = UILabel()
     private let keepButton = UIButton(type: .system)
     private let discardButton = UIButton(type: .system)
+    private let quitFloatingButton = UIButton(type: .system)
 
     // MARK: - Init
 
@@ -53,6 +53,16 @@ class GameViewController: UIViewController {
         startGame()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+
     // MARK: - Setup
 
     private let backgroundImageView: UIImageView = {
@@ -65,7 +75,6 @@ class GameViewController: UIViewController {
 
     private func setupUI() {
         view.backgroundColor = .black
-        title = "Ripple"
 
         // Background image
         view.addSubview(backgroundImageView)
@@ -77,52 +86,34 @@ class GameViewController: UIViewController {
         ])
         updateBackgroundImage()
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "Quit",
-            style: .plain,
-            target: self,
-            action: #selector(quitTapped)
-        )
+        // Floating quit button (top-left)
+        quitFloatingButton.setTitle("✕", for: .normal)
+        quitFloatingButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        quitFloatingButton.setTitleColor(.white, for: .normal)
+        quitFloatingButton.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        quitFloatingButton.layer.cornerRadius = 15
+        quitFloatingButton.translatesAutoresizingMaskIntoConstraints = false
+        quitFloatingButton.addTarget(self, action: #selector(quitTapped), for: .touchUpInside)
+        view.addSubview(quitFloatingButton)
+        NSLayoutConstraint.activate([
+            quitFloatingButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
+            quitFloatingButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
+            quitFloatingButton.widthAnchor.constraint(equalToConstant: 30),
+            quitFloatingButton.heightAnchor.constraint(equalToConstant: 30),
+        ])
 
-        // Three-zone layout: opponents (top) | piles (middle) | human (bottom)
-        topContainer.translatesAutoresizingMaskIntoConstraints = false
-        topContainer.backgroundColor = .clear
-        view.addSubview(topContainer)
-
+        // Pile container centered on screen
         pileContainer.translatesAutoresizingMaskIntoConstraints = false
         pileContainer.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.85)
         pileContainer.layer.cornerRadius = 10
         view.addSubview(pileContainer)
 
-        bottomContainer.translatesAutoresizingMaskIntoConstraints = false
-        bottomContainer.backgroundColor = .clear
-        view.addSubview(bottomContainer)
-
         NSLayoutConstraint.activate([
-            topContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            topContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            topContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            pileContainer.topAnchor.constraint(equalTo: topContainer.bottomAnchor, constant: 4),
             pileContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pileContainer.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.6),
+            pileContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            pileContainer.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.4),
             pileContainer.heightAnchor.constraint(equalToConstant: 60),
-
-            bottomContainer.topAnchor.constraint(equalTo: pileContainer.bottomAnchor, constant: 4),
-            bottomContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
-
-        // Split remaining vertical space: opponents get opponentCount shares, human gets 1 share
-        if opponentCount > 0 {
-            topContainer.heightAnchor.constraint(
-                equalTo: bottomContainer.heightAnchor,
-                multiplier: CGFloat(opponentCount)
-            ).isActive = true
-        } else {
-            topContainer.heightAnchor.constraint(equalToConstant: 0).isActive = true
-        }
 
         setupPileUI()
     }
@@ -775,186 +766,203 @@ class GameViewController: UIViewController {
         }
     }
 
+    /// Assign players to screen edges clockwise: bottom (human), left, top, right.
+    private func edgeAssignments() -> (bottom: [Int], left: [Int], top: [Int], right: [Int]) {
+        let opps = Array(1..<game.players.count)
+        switch opps.count {
+        case 0:  return ([0], [], [], [])
+        case 1:  return ([0], [], opps, [])
+        case 2:  return ([0], [opps[0]], [], [opps[1]])
+        case 3:  return ([0], [opps[0]], [opps[1]], [opps[2]])
+        case 4:  return ([0], [opps[0]], [opps[1], opps[2]], [opps[3]])
+        case 5:  return ([0], [opps[0], opps[1]], [opps[2]], [opps[3], opps[4]])
+        default: return ([0], [], opps, [])
+        }
+    }
+
     private func buildPlayerBoards() {
-        // Remove any existing subviews from containers
-        topContainer.subviews.forEach { $0.removeFromSuperview() }
-        bottomContainer.subviews.forEach { $0.removeFromSuperview() }
+        // Remove existing boards
+        playerBoardContainers.forEach { $0.removeFromSuperview() }
+        playerBoardContainers.removeAll()
         playerCardViews.removeAll()
         playerIconViews.removeAll()
         playerScoreLabels.removeAll()
 
-        // Calculate card sizes to fit on screen
-        // Each player section = headerHeight + 2*cardHeight + cardSpacing
-        // Available height is split proportionally between containers
-        let safeHeight = view.safeAreaLayoutGuide.layoutFrame.height > 0
-            ? view.safeAreaLayoutGuide.layoutFrame.height
-            : view.bounds.height - 80  // estimate if not laid out yet
+        let totalPlayers = game.players.count
+        playerCardViews = Array(repeating: [], count: totalPlayers)
+        playerIconViews = Array(repeating: UIImageView(), count: totalPlayers)
+        playerScoreLabels = Array(repeating: UILabel(), count: totalPlayers)
+
+        let screenW = view.bounds.width
+        let screenH = view.bounds.height
+        let safe = view.safeAreaInsets
+
+        let edges = edgeAssignments()
+        let hasLeft = !edges.left.isEmpty
+        let hasRight = !edges.right.isEmpty
+        let hasTop = !edges.top.isEmpty
+
+        // Side zones: 22% of screen width when occupied
+        let sideZoneW: CGFloat = (hasLeft || hasRight) ? screenW * 0.22 : 0
+        let centerW = screenW - (hasLeft ? sideZoneW : 0) - (hasRight ? sideZoneW : 0)
+
+        // Pile is centered; zones fill the space above/below
         let pileH: CGFloat = 60
-        let spacing: CGFloat = 8  // vertical spacing between sections
-        let totalPlayers = opponentCount + 1
-        let availableHeight = safeHeight - pileH - spacing * 2
+        let pileGap: CGFloat = 8
+        let pileMidY = screenH / 2
+        let topZoneH = pileMidY - pileH / 2 - pileGap - safe.top
+        let bottomZoneH = screenH - safe.bottom - (pileMidY + pileH / 2 + pileGap)
 
-        // Each player gets: headerRow + 2 card rows + inner spacing
-        let headerHeight: CGFloat = 18
-        let innerCardSpacing: CGFloat = 3
-        let perPlayerHeight = availableHeight / CGFloat(totalPlayers)
-        let cardRowsHeight = perPlayerHeight - headerHeight - innerCardSpacing - 4 // 4pt padding
-        let cardHeight = floor(max(cardRowsHeight / 2, 20))
-        let cardWidth = floor(cardHeight * 56.0 / 80.0)
+        let headerH: CGFloat = 18
+        let vSp: CGFloat = 3
+        let hSp: CGFloat = 4
+        let pad: CGFloat = 6
 
-        // Also limit card width so 5 cards fit horizontally
-        let sidePadding: CGFloat = 16
-        let hCardSpacing: CGFloat = 4
-        let maxCardWidth = floor((view.bounds.width - 2 * sidePadding - 4 * hCardSpacing) / 5)
-        let finalCardW = min(cardWidth, maxCardWidth)
-        let finalCardH = floor(finalCardW * 80.0 / 56.0)
-
-        // Reorder players: opponents first (indices 1..N), then human (index 0) at bottom
-        // But keep arrays indexed by game player index
-        // We'll place players 1..N in topContainer, player 0 in bottomContainer
-
-        // Initialize arrays with placeholders
-        playerCardViews = Array(repeating: [], count: game.players.count)
-        playerIconViews = Array(repeating: UIImageView(), count: game.players.count)
-        playerScoreLabels = Array(repeating: UILabel(), count: game.players.count)
-
-        // Build opponent boards in topContainer
-        var opponentY: CGFloat = 2
-        for playerIndex in 1..<game.players.count {
-            let player = game.players[playerIndex]
-            opponentY = addPlayerBoard(
-                player: player,
-                playerIndex: playerIndex,
-                to: topContainer,
-                startY: opponentY,
-                cardW: finalCardW,
-                cardH: finalCardH,
-                hSpacing: hCardSpacing,
-                vSpacing: innerCardSpacing,
-                sidePadding: sidePadding,
-                headerHeight: headerHeight
-            )
-            opponentY += 4 // gap between opponents
+        // Compute card and board sizes for a given zone
+        func sizeForZone(zoneW: CGFloat, zoneH: CGFloat, playersWide: Int = 1, playersHigh: Int = 1)
+            -> (cardW: CGFloat, cardH: CGFloat, boardW: CGFloat, boardH: CGFloat) {
+            let perW = zoneW / CGFloat(max(playersWide, 1))
+            let perH = zoneH / CGFloat(max(playersHigh, 1))
+            var ch = floor((perH - headerH - vSp - pad * 2) / 2)
+            var cw = floor(ch * 56.0 / 80.0)
+            let maxCW = floor((perW - pad * 2 - 4 * hSp) / 5)
+            if cw > maxCW { cw = maxCW; ch = floor(cw * 80.0 / 56.0) }
+            ch = max(ch, 16); cw = max(floor(ch * 56.0 / 80.0), 12)
+            let gw = 5 * cw + 4 * hSp
+            let gh = 2 * ch + vSp
+            return (cw, ch, gw + pad * 2, headerH + gh + pad * 2)
         }
 
-        // Build human board in bottomContainer
-        addPlayerBoard(
-            player: game.players[0],
-            playerIndex: 0,
-            to: bottomContainer,
-            startY: 2,
-            cardW: finalCardW,
-            cardH: finalCardH,
-            hSpacing: hCardSpacing,
-            vSpacing: innerCardSpacing,
-            sidePadding: sidePadding,
-            headerHeight: headerHeight
-        )
-    }
+        let btm = sizeForZone(zoneW: centerW, zoneH: bottomZoneH)
+        let topSz = hasTop
+            ? sizeForZone(zoneW: centerW, zoneH: topZoneH, playersWide: edges.top.count)
+            : (cardW: CGFloat(0), cardH: CGFloat(0), boardW: CGFloat(0), boardH: CGFloat(0))
+        let maxSideStack = max(edges.left.count, edges.right.count, 1)
+        let sideAvailH = screenH - safe.top - safe.bottom
+        let sideSz = (hasLeft || hasRight)
+            ? sizeForZone(zoneW: sideZoneW, zoneH: sideAvailH, playersHigh: maxSideStack)
+            : (cardW: CGFloat(0), cardH: CGFloat(0), boardW: CGFloat(0), boardH: CGFloat(0))
 
-    /// Adds a player's header + 2×5 card grid to the given container.
-    /// Returns the Y position after the last card row.
-    @discardableResult
-    private func addPlayerBoard(
-        player: Player,
-        playerIndex: Int,
-        to container: UIView,
-        startY: CGFloat,
-        cardW: CGFloat,
-        cardH: CGFloat,
-        hSpacing: CGFloat,
-        vSpacing: CGFloat,
-        sidePadding: CGFloat,
-        headerHeight: CGFloat
-    ) -> CGFloat {
-        var currentY = startY
+        // Build a board view for one player
+        func makeBoard(playerIndex: Int, cw: CGFloat, ch: CGFloat, bw: CGFloat, bh: CGFloat) -> UIView {
+            let container = UIView(frame: CGRect(x: 0, y: 0, width: bw, height: bh))
+            container.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+            container.layer.cornerRadius = 8
 
-        // Center the card grid horizontally
-        let gridWidth = 5 * cardW + 4 * hSpacing
-        let gridLeading = (view.bounds.width - gridWidth) / 2
+            let player = game.players[playerIndex]
 
-        // Player icon
-        let iconView = UIImageView()
-        let iconConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-        iconView.image = UIImage(systemName: player.icon, withConfiguration: iconConfig)
-        iconView.tintColor = .systemBlue
-        iconView.contentMode = .scaleAspectFit
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(iconView)
-        playerIconViews[playerIndex] = iconView
+            let iconView = UIImageView()
+            let iconCfg = UIImage.SymbolConfiguration(pointSize: 12, weight: .medium)
+            iconView.image = UIImage(systemName: player.icon, withConfiguration: iconCfg)
+            iconView.tintColor = .systemBlue
+            iconView.contentMode = .scaleAspectFit
+            iconView.frame = CGRect(x: pad, y: pad, width: 16, height: 16)
+            container.addSubview(iconView)
+            playerIconViews[playerIndex] = iconView
 
-        // Player name
-        let nameLabel = UILabel()
-        nameLabel.text = player.name
-        nameLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
-        nameLabel.textColor = .white
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(nameLabel)
+            let nameLabel = UILabel()
+            nameLabel.text = player.name
+            nameLabel.font = UIFont.systemFont(ofSize: 11, weight: .bold)
+            nameLabel.textColor = .white
+            nameLabel.frame = CGRect(x: pad + 20, y: pad, width: bw - pad * 2 - 80, height: 16)
+            container.addSubview(nameLabel)
 
-        // Score label
-        let scoreLabel = UILabel()
-        let totalScore = playerIndex < game.totalScores.count ? game.totalScores[playerIndex] : 0
-        scoreLabel.text = "Score: \(totalScore)"
-        scoreLabel.font = UIFont.systemFont(ofSize: 11, weight: .regular)
-        scoreLabel.textColor = .lightGray
-        scoreLabel.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(scoreLabel)
-        playerScoreLabels[playerIndex] = scoreLabel
+            let scoreLabel = UILabel()
+            scoreLabel.text = "Score: \(game.totalScores[playerIndex])"
+            scoreLabel.font = UIFont.systemFont(ofSize: 10, weight: .regular)
+            scoreLabel.textColor = .lightGray
+            scoreLabel.textAlignment = .right
+            scoreLabel.frame = CGRect(x: bw - pad - 60, y: pad, width: 60, height: 16)
+            container.addSubview(scoreLabel)
+            playerScoreLabels[playerIndex] = scoreLabel
 
-        NSLayoutConstraint.activate([
-            iconView.topAnchor.constraint(equalTo: container.topAnchor, constant: currentY),
-            iconView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: gridLeading),
-            iconView.widthAnchor.constraint(equalToConstant: 18),
-            iconView.heightAnchor.constraint(equalToConstant: 18),
+            var cardViews: [CardView] = []
+            let gridStartY = pad + headerH
+            for row in 0..<2 {
+                for col in 0..<5 {
+                    let cardIndex = row * 5 + col
+                    let card = player.cards[cardIndex]
+                    let isFaceUp = player.faceUp[cardIndex]
 
-            nameLabel.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 4),
+                    let cv = CardView()
+                    cv.frame = CGRect(
+                        x: pad + CGFloat(col) * (cw + hSp),
+                        y: gridStartY + CGFloat(row) * (ch + vSp),
+                        width: cw, height: ch
+                    )
+                    cv.configure(with: card, faceUp: isFaceUp)
 
-            scoreLabel.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
-            scoreLabel.trailingAnchor.constraint(equalTo: container.leadingAnchor, constant: gridLeading + gridWidth),
-        ])
-
-        currentY += headerHeight
-
-        // Build 2 rows × 5 columns of cards
-        var cardViewsForPlayer: [CardView] = []
-
-        for row in 0..<2 {
-            for col in 0..<5 {
-                let cardIndex = row * 5 + col
-                let card = player.cards[cardIndex]
-                let isFaceUp = player.faceUp[cardIndex]
-
-                let cardView = CardView()
-                cardView.translatesAutoresizingMaskIntoConstraints = false
-                cardView.configure(with: card, faceUp: isFaceUp)
-                container.addSubview(cardView)
-
-                let xOffset = gridLeading + CGFloat(col) * (cardW + hSpacing)
-                let yOffset = currentY + CGFloat(row) * (cardH + vSpacing)
-
-                NSLayoutConstraint.activate([
-                    cardView.topAnchor.constraint(equalTo: container.topAnchor, constant: yOffset),
-                    cardView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: xOffset),
-                    cardView.widthAnchor.constraint(equalToConstant: cardW),
-                    cardView.heightAnchor.constraint(equalToConstant: cardH),
-                ])
-
-                let pIdx = playerIndex
-                let idx = cardIndex
-                cardView.onTap = { [weak self] in
-                    guard let self = self else { return }
-                    guard self.game.currentPlayerIndex == pIdx else { return }
-                    self.humanCardTapped(at: idx)
+                    let pIdx = playerIndex
+                    let idx = cardIndex
+                    cv.onTap = { [weak self] in
+                        guard let self = self else { return }
+                        guard self.game.currentPlayerIndex == pIdx else { return }
+                        self.humanCardTapped(at: idx)
+                    }
+                    container.addSubview(cv)
+                    cardViews.append(cv)
                 }
+            }
+            playerCardViews[playerIndex] = cardViews
+            return container
+        }
 
-                cardViewsForPlayer.append(cardView)
+        // --- Position boards around the screen edges ---
+        let centerX = (hasLeft ? sideZoneW : 0) + centerW / 2
+
+        // BOTTOM (human player)
+        for playerIdx in edges.bottom {
+            let board = makeBoard(playerIndex: playerIdx, cw: btm.cardW, ch: btm.cardH, bw: btm.boardW, bh: btm.boardH)
+            board.center = CGPoint(x: centerX, y: screenH - safe.bottom - btm.boardH / 2 - 2)
+            view.addSubview(board)
+            playerBoardContainers.append(board)
+        }
+
+        // TOP (opponents across from human)
+        if hasTop {
+            let topTotalW = topSz.boardW * CGFloat(edges.top.count) + 10 * CGFloat(max(edges.top.count - 1, 0))
+            var topX = centerX - topTotalW / 2 + topSz.boardW / 2
+            let topY = safe.top + topSz.boardH / 2 + 2
+            for playerIdx in edges.top {
+                let board = makeBoard(playerIndex: playerIdx, cw: topSz.cardW, ch: topSz.cardH, bw: topSz.boardW, bh: topSz.boardH)
+                board.center = CGPoint(x: topX, y: topY)
+                view.addSubview(board)
+                playerBoardContainers.append(board)
+                topX += topSz.boardW + 10
             }
         }
 
-        playerCardViews[playerIndex] = cardViewsForPlayer
-        currentY += 2 * cardH + vSpacing
-        return currentY
+        // LEFT (opponents on left edge, stacked vertically)
+        if hasLeft {
+            let leftTotalH = sideSz.boardH * CGFloat(edges.left.count) + 10 * CGFloat(max(edges.left.count - 1, 0))
+            let leftX = safe.left + sideZoneW / 2
+            var leftY = (screenH - leftTotalH) / 2 + sideSz.boardH / 2
+            for playerIdx in edges.left {
+                let board = makeBoard(playerIndex: playerIdx, cw: sideSz.cardW, ch: sideSz.cardH, bw: sideSz.boardW, bh: sideSz.boardH)
+                board.center = CGPoint(x: leftX, y: leftY)
+                view.addSubview(board)
+                playerBoardContainers.append(board)
+                leftY += sideSz.boardH + 10
+            }
+        }
+
+        // RIGHT (opponents on right edge, stacked vertically)
+        if hasRight {
+            let rightTotalH = sideSz.boardH * CGFloat(edges.right.count) + 10 * CGFloat(max(edges.right.count - 1, 0))
+            let rightX = screenW - safe.right - sideZoneW / 2
+            var rightY = (screenH - rightTotalH) / 2 + sideSz.boardH / 2
+            for playerIdx in edges.right {
+                let board = makeBoard(playerIndex: playerIdx, cw: sideSz.cardW, ch: sideSz.cardH, bw: sideSz.boardW, bh: sideSz.boardH)
+                board.center = CGPoint(x: rightX, y: rightY)
+                view.addSubview(board)
+                playerBoardContainers.append(board)
+                rightY += sideSz.boardH + 10
+            }
+        }
+
+        // Bring pile and quit button to front
+        view.bringSubviewToFront(pileContainer)
+        view.bringSubviewToFront(quitFloatingButton)
     }
 
     // MARK: - Interaction
