@@ -92,25 +92,20 @@ class ProfileViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             avatarImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 60),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 100),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 100),
+            avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            avatarImageView.widthAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
+            avatarImageView.heightAnchor.constraint(equalTo: avatarImageView.widthAnchor),
 
             usernameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            usernameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 20),
-            usernameLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
-            usernameLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
+            usernameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 12),
 
             emailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emailLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 8),
-            emailLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
-            emailLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
+            emailLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 6),
 
             logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoutButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            logoutButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            logoutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            logoutButton.heightAnchor.constraint(equalToConstant: 54),
+            logoutButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            logoutButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.35),
+            logoutButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
 

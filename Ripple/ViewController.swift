@@ -97,32 +97,30 @@ class ViewController: UIViewController {
         view.addSubview(friendsButton)
 
         NSLayoutConstraint.activate([
-            profileButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            profileButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            profileButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
+            profileButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             profileButton.widthAnchor.constraint(equalToConstant: 44),
             profileButton.heightAnchor.constraint(equalToConstant: 44),
 
             friendsButton.topAnchor.constraint(equalTo: profileButton.bottomAnchor, constant: 8),
-            friendsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            friendsButton.trailingAnchor.constraint(equalTo: profileButton.trailingAnchor),
             friendsButton.widthAnchor.constraint(equalToConstant: 44),
             friendsButton.heightAnchor.constraint(equalToConstant: 44),
 
             titleImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            titleImageView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 40),
-            titleImageView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -40),
+            titleImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
+            titleImageView.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.4),
+            titleImageView.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.35),
 
             soloPlayButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            soloPlayButton.bottomAnchor.constraint(equalTo: playWithFriendsButton.topAnchor, constant: -16),
-            soloPlayButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            soloPlayButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            soloPlayButton.heightAnchor.constraint(equalToConstant: 54),
+            soloPlayButton.bottomAnchor.constraint(equalTo: playWithFriendsButton.topAnchor, constant: -12),
+            soloPlayButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            soloPlayButton.heightAnchor.constraint(equalToConstant: 50),
 
             playWithFriendsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            playWithFriendsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            playWithFriendsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            playWithFriendsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            playWithFriendsButton.heightAnchor.constraint(equalToConstant: 54),
+            playWithFriendsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            playWithFriendsButton.widthAnchor.constraint(equalTo: soloPlayButton.widthAnchor),
+            playWithFriendsButton.heightAnchor.constraint(equalTo: soloPlayButton.heightAnchor),
         ])
     }
 

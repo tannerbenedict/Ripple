@@ -84,6 +84,12 @@ class GameViewController: UIViewController {
             action: #selector(quitTapped)
         )
 
+        // Pile container (position set early so scroll view can reference it)
+        pileContainer.translatesAutoresizingMaskIntoConstraints = false
+        pileContainer.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.85)
+        pileContainer.layer.cornerRadius = 12
+        view.addSubview(pileContainer)
+
         // Scroll view for all player boards
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,11 +98,20 @@ class GameViewController: UIViewController {
         scrollView.backgroundColor = .clear
         contentView.backgroundColor = .clear
 
+        let pileHeight = pileContainer.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.32)
+        pileHeight.priority = .defaultHigh
         NSLayoutConstraint.activate([
+            pileContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            pileContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            pileContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            pileHeight,
+            pileContainer.heightAnchor.constraint(greaterThanOrEqualToConstant: 100),
+            pileContainer.heightAnchor.constraint(lessThanOrEqualToConstant: 160),
+
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -160),
+            scrollView.bottomAnchor.constraint(equalTo: pileContainer.topAnchor, constant: -4),
 
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
@@ -109,10 +124,7 @@ class GameViewController: UIViewController {
     }
 
     private func setupPileUI() {
-        pileContainer.translatesAutoresizingMaskIntoConstraints = false
-        pileContainer.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.85)
-        pileContainer.layer.cornerRadius = 12
-        view.addSubview(pileContainer)
+        // pileContainer already configured and added to view in setupUI()
 
         // Draw pile
         drawPileView.translatesAutoresizingMaskIntoConstraints = false
@@ -175,44 +187,39 @@ class GameViewController: UIViewController {
         pileContainer.addSubview(discardButton)
 
         NSLayoutConstraint.activate([
-            pileContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
-            pileContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
-            pileContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
-            pileContainer.heightAnchor.constraint(equalToConstant: 140),
+            drawPileView.leadingAnchor.constraint(equalTo: pileContainer.leadingAnchor, constant: 12),
+            drawPileView.centerYAnchor.constraint(equalTo: pileContainer.centerYAnchor, constant: -8),
+            drawPileView.heightAnchor.constraint(equalTo: pileContainer.heightAnchor, multiplier: 0.55),
+            drawPileView.widthAnchor.constraint(equalTo: drawPileView.heightAnchor, multiplier: 0.7),
 
-            drawPileView.leadingAnchor.constraint(equalTo: pileContainer.leadingAnchor, constant: 16),
-            drawPileView.topAnchor.constraint(equalTo: pileContainer.topAnchor, constant: 10),
-            drawPileView.widthAnchor.constraint(equalToConstant: 56),
-            drawPileView.heightAnchor.constraint(equalToConstant: 80),
-
-            drawPileLabel.topAnchor.constraint(equalTo: drawPileView.bottomAnchor, constant: 4),
+            drawPileLabel.topAnchor.constraint(equalTo: drawPileView.bottomAnchor, constant: 2),
             drawPileLabel.centerXAnchor.constraint(equalTo: drawPileView.centerXAnchor),
 
-            discardPileView.leadingAnchor.constraint(equalTo: drawPileView.trailingAnchor, constant: 16),
-            discardPileView.topAnchor.constraint(equalTo: pileContainer.topAnchor, constant: 10),
-            discardPileView.widthAnchor.constraint(equalToConstant: 56),
-            discardPileView.heightAnchor.constraint(equalToConstant: 80),
+            discardPileView.leadingAnchor.constraint(equalTo: drawPileView.trailingAnchor, constant: 12),
+            discardPileView.centerYAnchor.constraint(equalTo: drawPileView.centerYAnchor),
+            discardPileView.widthAnchor.constraint(equalTo: drawPileView.widthAnchor),
+            discardPileView.heightAnchor.constraint(equalTo: drawPileView.heightAnchor),
 
-            discardPileLabel.topAnchor.constraint(equalTo: discardPileView.bottomAnchor, constant: 4),
+            discardPileLabel.topAnchor.constraint(equalTo: discardPileView.bottomAnchor, constant: 2),
             discardPileLabel.centerXAnchor.constraint(equalTo: discardPileView.centerXAnchor),
 
-            drawnCardView.leadingAnchor.constraint(equalTo: discardPileView.trailingAnchor, constant: 24),
-            drawnCardView.topAnchor.constraint(equalTo: pileContainer.topAnchor, constant: 10),
-            drawnCardView.widthAnchor.constraint(equalToConstant: 56),
-            drawnCardView.heightAnchor.constraint(equalToConstant: 80),
+            drawnCardView.leadingAnchor.constraint(equalTo: discardPileView.trailingAnchor, constant: 20),
+            drawnCardView.centerYAnchor.constraint(equalTo: drawPileView.centerYAnchor),
+            drawnCardView.widthAnchor.constraint(equalTo: drawPileView.widthAnchor),
+            drawnCardView.heightAnchor.constraint(equalTo: drawPileView.heightAnchor),
 
-            drawnCardLabel.topAnchor.constraint(equalTo: drawnCardView.bottomAnchor, constant: 4),
+            drawnCardLabel.topAnchor.constraint(equalTo: drawnCardView.bottomAnchor, constant: 2),
             drawnCardLabel.centerXAnchor.constraint(equalTo: drawnCardView.centerXAnchor),
 
-            keepButton.leadingAnchor.constraint(equalTo: drawnCardView.trailingAnchor, constant: 16),
-            keepButton.topAnchor.constraint(equalTo: pileContainer.topAnchor, constant: 16),
+            keepButton.leadingAnchor.constraint(equalTo: drawnCardView.trailingAnchor, constant: 12),
+            keepButton.topAnchor.constraint(equalTo: pileContainer.topAnchor, constant: 12),
             keepButton.widthAnchor.constraint(equalToConstant: 80),
-            keepButton.heightAnchor.constraint(equalToConstant: 36),
+            keepButton.heightAnchor.constraint(equalToConstant: 34),
 
             discardButton.leadingAnchor.constraint(equalTo: keepButton.leadingAnchor),
-            discardButton.topAnchor.constraint(equalTo: keepButton.bottomAnchor, constant: 8),
-            discardButton.widthAnchor.constraint(equalToConstant: 80),
-            discardButton.heightAnchor.constraint(equalToConstant: 36),
+            discardButton.topAnchor.constraint(equalTo: keepButton.bottomAnchor, constant: 6),
+            discardButton.widthAnchor.constraint(equalTo: keepButton.widthAnchor),
+            discardButton.heightAnchor.constraint(equalTo: keepButton.heightAnchor),
         ])
 
         pileContainer.isHidden = true  // Hidden during initial flip phase
@@ -772,11 +779,12 @@ class GameViewController: UIViewController {
         playerIconViews.removeAll()
         playerScoreLabels.removeAll()
 
-        let cardWidth: CGFloat = 56
-        let cardHeight: CGFloat = 80
-        let cardSpacing: CGFloat = 8
-        let sectionSpacing: CGFloat = 30
         let sidePadding: CGFloat = 20
+        let cardSpacing: CGFloat = 8
+        let availableWidth = view.bounds.width - 2 * sidePadding
+        let cardWidth = floor((availableWidth - 4 * cardSpacing) / 5)
+        let cardHeight = floor(cardWidth * 80.0 / 56.0)
+        let sectionSpacing: CGFloat = max(16, view.bounds.height * 0.04)
 
         var currentY: CGFloat = 20
 

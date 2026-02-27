@@ -98,38 +98,55 @@ class LoginFormViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
 
-        view.addSubview(titleLabel)
-        view.addSubview(emailField)
-        view.addSubview(passwordField)
-        view.addSubview(errorLabel)
-        view.addSubview(loginButton)
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.keyboardDismissMode = .onDrag
+        view.addSubview(scrollView)
 
-        let fieldHeight: CGFloat = 50
+        let formContainer = UIView()
+        formContainer.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(formContainer)
+
+        formContainer.addSubview(titleLabel)
+        formContainer.addSubview(emailField)
+        formContainer.addSubview(passwordField)
+        formContainer.addSubview(errorLabel)
+        formContainer.addSubview(loginButton)
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            emailField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 40),
-            emailField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            emailField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            emailField.heightAnchor.constraint(equalToConstant: fieldHeight),
+            formContainer.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            formContainer.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            formContainer.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            formContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            formContainer.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 16),
-            passwordField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            passwordField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            passwordField.heightAnchor.constraint(equalToConstant: fieldHeight),
+            titleLabel.topAnchor.constraint(equalTo: formContainer.topAnchor, constant: 20),
+            titleLabel.centerXAnchor.constraint(equalTo: formContainer.centerXAnchor),
 
-            errorLabel.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 12),
-            errorLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            errorLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            emailField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            emailField.centerXAnchor.constraint(equalTo: formContainer.centerXAnchor),
+            emailField.widthAnchor.constraint(equalTo: formContainer.widthAnchor, multiplier: 0.45),
+            emailField.heightAnchor.constraint(equalToConstant: 44),
 
-            loginButton.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 20),
-            loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            loginButton.heightAnchor.constraint(equalToConstant: 54),
+            passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 12),
+            passwordField.centerXAnchor.constraint(equalTo: formContainer.centerXAnchor),
+            passwordField.widthAnchor.constraint(equalTo: emailField.widthAnchor),
+            passwordField.heightAnchor.constraint(equalTo: emailField.heightAnchor),
+
+            errorLabel.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 8),
+            errorLabel.centerXAnchor.constraint(equalTo: formContainer.centerXAnchor),
+            errorLabel.widthAnchor.constraint(equalTo: emailField.widthAnchor),
+
+            loginButton.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 16),
+            loginButton.centerXAnchor.constraint(equalTo: formContainer.centerXAnchor),
+            loginButton.widthAnchor.constraint(equalTo: emailField.widthAnchor),
+            loginButton.heightAnchor.constraint(equalToConstant: 50),
+            loginButton.bottomAnchor.constraint(equalTo: formContainer.bottomAnchor, constant: -20),
         ])
 
         emailField.delegate = self
