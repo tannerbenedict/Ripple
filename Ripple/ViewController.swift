@@ -72,7 +72,7 @@ class ViewController: UIViewController {
 
     private let backgroundImageView: UIImageView = {
         let iv = UIImageView()
-        iv.contentMode = .scaleAspectFill
+        iv.contentMode = .scaleToFill
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.clipsToBounds = true
         return iv
@@ -219,8 +219,8 @@ class ViewController: UIViewController {
     }
 
     private func updateBackgroundImage() {
+        backgroundImageView.image = UIImage(named: "oak_background")
         let isDark = traitCollection.userInterfaceStyle == .dark
-        backgroundImageView.image = UIImage(named: isDark ? "dark_background" : "oak_background")
         titleImageView.image = UIImage(named: isDark ? "whiteTitle" : "title")
     }
 }
