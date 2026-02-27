@@ -10,6 +10,27 @@
 		A1B2C3D4E5F60001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60010 /* AppDelegate.swift */; };
 		A1B2C3D4E5F60002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60011 /* SceneDelegate.swift */; };
 		A1B2C3D4E5F60003 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60012 /* ViewController.swift */; };
+		A1B2C3D4E5F60005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60015 /* Assets.xcassets */; };
+		A1B2C3D4E5F60007 /* Images/oak_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60019 /* Images/oak_background.jpg */; };
+		A1B2C3D4E5F60008 /* Images/dark_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001A /* Images/dark_background.jpg */; };
+		A1B2C3D4E5F60009 /* Images/title.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001B /* Images/title.png */; };
+		A1B2C3D4E5F6000A /* Images/whiteTitle.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001C /* Images/whiteTitle.png */; };
+		A1B2C3D4E5F6000B /* Images/cardBack.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001D /* Images/cardBack.png */; };
+		A1B2C3D4E5F6000C /* Images/cards/0.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001E /* Images/cards/0.png */; };
+		A1B2C3D4E5F6000D /* Images/cards/1.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001F /* Images/cards/1.png */; };
+		A1B2C3D4E5F6000E /* Images/cards/2.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60021 /* Images/cards/2.png */; };
+		A1B2C3D4E5F6000F /* Images/cards/3.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60022 /* Images/cards/3.png */; };
+		A1B2C3D4E5F60100 /* Images/cards/4.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60023 /* Images/cards/4.png */; };
+		A1B2C3D4E5F60101 /* Images/cards/5.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60024 /* Images/cards/5.png */; };
+		A1B2C3D4E5F60102 /* Images/cards/6.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60025 /* Images/cards/6.png */; };
+		A1B2C3D4E5F60103 /* Images/cards/7.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60026 /* Images/cards/7.png */; };
+		A1B2C3D4E5F60104 /* Images/cards/8.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60027 /* Images/cards/8.png */; };
+		A1B2C3D4E5F60105 /* Images/cards/9.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60028 /* Images/cards/9.png */; };
+		A1B2C3D4E5F60106 /* Images/cards/10.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60029 /* Images/cards/10.png */; };
+		A1B2C3D4E5F60107 /* Images/cards/11.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002A /* Images/cards/11.png */; };
+		A1B2C3D4E5F60108 /* Images/cards/12.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002B /* Images/cards/12.png */; };
+		A1B2C3D4E5F60109 /* Images/splash_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002C /* Images/splash_screen.png */; };
+		A1B2C3D4E5F6010A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */; };
 		A1B2C3D4E5F60200 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60210 /* AuthManager.swift */; };
 		A1B2C3D4E5F60201 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60211 /* Card.swift */; };
 		A1B2C3D4E5F60202 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60212 /* CardView.swift */; };
@@ -21,33 +42,35 @@
 		A1B2C3D4E5F60208 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60218 /* Player.swift */; };
 		A1B2C3D4E5F60209 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60219 /* ProfileViewController.swift */; };
 		A1B2C3D4E5F6020A /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6021A /* SignUpViewController.swift */; };
-		A1B2C3D4E5F60005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60015 /* Assets.xcassets */; };
-		A1B2C3D4E5F60007 /* oak_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60019 /* oak_background.jpg */; };
-		A1B2C3D4E5F60008 /* dark_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001A /* dark_background.jpg */; };
-		A1B2C3D4E5F60009 /* title.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001B /* title.png */; };
-		A1B2C3D4E5F6000A /* whiteTitle.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001C /* whiteTitle.png */; };
-		A1B2C3D4E5F6000B /* cardBack.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001D /* cardBack.png */; };
-		A1B2C3D4E5F6000C /* 0.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001E /* 0.png */; };
-		A1B2C3D4E5F6000D /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6001F /* 1.png */; };
-		A1B2C3D4E5F6000E /* 2.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60021 /* 2.png */; };
-		A1B2C3D4E5F6000F /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60022 /* 3.png */; };
-		A1B2C3D4E5F60100 /* 4.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60023 /* 4.png */; };
-		A1B2C3D4E5F60101 /* 5.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60024 /* 5.png */; };
-		A1B2C3D4E5F60102 /* 6.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60025 /* 6.png */; };
-		A1B2C3D4E5F60103 /* 7.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60026 /* 7.png */; };
-		A1B2C3D4E5F60104 /* 8.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60027 /* 8.png */; };
-		A1B2C3D4E5F60105 /* 9.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60028 /* 9.png */; };
-		A1B2C3D4E5F60106 /* 10.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60029 /* 10.png */; };
-		A1B2C3D4E5F60107 /* 11.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002A /* 11.png */; };
-		A1B2C3D4E5F60108 /* 12.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002B /* 12.png */; };
-		A1B2C3D4E5F60109 /* splash_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002C /* splash_screen.png */; };
-		A1B2C3D4E5F6010A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A1B2C3D4E5F60010 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60011 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60012 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60015 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1B2C3D4E5F60018 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1B2C3D4E5F60019 /* Images/oak_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Images/oak_background.jpg; sourceTree = "<group>"; };
+		A1B2C3D4E5F6001A /* Images/dark_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Images/dark_background.jpg; sourceTree = "<group>"; };
+		A1B2C3D4E5F6001B /* Images/title.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/title.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6001C /* Images/whiteTitle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/whiteTitle.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6001D /* Images/cardBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cardBack.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6001E /* Images/cards/0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/0.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6001F /* Images/cards/1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/1.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60020 /* Ripple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ripple.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60021 /* Images/cards/2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/2.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60022 /* Images/cards/3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/3.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60023 /* Images/cards/4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/4.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60024 /* Images/cards/5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/5.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60025 /* Images/cards/6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/6.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60026 /* Images/cards/7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/7.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60027 /* Images/cards/8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/8.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60028 /* Images/cards/9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/9.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60029 /* Images/cards/10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/10.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6002A /* Images/cards/11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/11.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6002B /* Images/cards/12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/cards/12.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6002C /* Images/splash_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Images/splash_screen.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A1B2C3D4E5F60210 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60211 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60212 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
@@ -59,29 +82,6 @@
 		A1B2C3D4E5F60218 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60219 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6021A /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60015 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A1B2C3D4E5F60018 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1B2C3D4E5F60019 /* oak_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Images/oak_background.jpg"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6001A /* dark_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Images/dark_background.jpg"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6001B /* title.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/title.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6001C /* whiteTitle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/whiteTitle.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6001D /* cardBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cardBack.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6001E /* 0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/0.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6001F /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/1.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60021 /* 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/2.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60022 /* 3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/3.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60023 /* 4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/4.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60024 /* 5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/5.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60025 /* 6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/6.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60026 /* 7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/7.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60027 /* 8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/8.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60028 /* 9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/9.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60029 /* 10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/10.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6002A /* 11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/11.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6002B /* 12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/12.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6002C /* splash_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/splash_screen.png"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		A1B2C3D4E5F60020 /* Ripple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ripple.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,25 +122,25 @@
 				A1B2C3D4E5F6021A /* SignUpViewController.swift */,
 				A1B2C3D4E5F60015 /* Assets.xcassets */,
 				A1B2C3D4E5F60018 /* Info.plist */,
-				A1B2C3D4E5F60019 /* oak_background.jpg */,
-				A1B2C3D4E5F6001A /* dark_background.jpg */,
-				A1B2C3D4E5F6001B /* title.png */,
-				A1B2C3D4E5F6001C /* whiteTitle.png */,
-				A1B2C3D4E5F6001D /* cardBack.png */,
-				A1B2C3D4E5F6001E /* 0.png */,
-				A1B2C3D4E5F6001F /* 1.png */,
-				A1B2C3D4E5F60021 /* 2.png */,
-				A1B2C3D4E5F60022 /* 3.png */,
-				A1B2C3D4E5F60023 /* 4.png */,
-				A1B2C3D4E5F60024 /* 5.png */,
-				A1B2C3D4E5F60025 /* 6.png */,
-				A1B2C3D4E5F60026 /* 7.png */,
-				A1B2C3D4E5F60027 /* 8.png */,
-				A1B2C3D4E5F60028 /* 9.png */,
-				A1B2C3D4E5F60029 /* 10.png */,
-				A1B2C3D4E5F6002A /* 11.png */,
-				A1B2C3D4E5F6002B /* 12.png */,
-				A1B2C3D4E5F6002C /* splash_screen.png */,
+				A1B2C3D4E5F60019 /* Images/oak_background.jpg */,
+				A1B2C3D4E5F6001A /* Images/dark_background.jpg */,
+				A1B2C3D4E5F6001B /* Images/title.png */,
+				A1B2C3D4E5F6001C /* Images/whiteTitle.png */,
+				A1B2C3D4E5F6001D /* Images/cardBack.png */,
+				A1B2C3D4E5F6001E /* Images/cards/0.png */,
+				A1B2C3D4E5F6001F /* Images/cards/1.png */,
+				A1B2C3D4E5F60021 /* Images/cards/2.png */,
+				A1B2C3D4E5F60022 /* Images/cards/3.png */,
+				A1B2C3D4E5F60023 /* Images/cards/4.png */,
+				A1B2C3D4E5F60024 /* Images/cards/5.png */,
+				A1B2C3D4E5F60025 /* Images/cards/6.png */,
+				A1B2C3D4E5F60026 /* Images/cards/7.png */,
+				A1B2C3D4E5F60027 /* Images/cards/8.png */,
+				A1B2C3D4E5F60028 /* Images/cards/9.png */,
+				A1B2C3D4E5F60029 /* Images/cards/10.png */,
+				A1B2C3D4E5F6002A /* Images/cards/11.png */,
+				A1B2C3D4E5F6002B /* Images/cards/12.png */,
+				A1B2C3D4E5F6002C /* Images/splash_screen.png */,
 				A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */,
 			);
 			path = Ripple;
@@ -213,25 +213,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F60005 /* Assets.xcassets in Resources */,
-				A1B2C3D4E5F60007 /* oak_background.jpg in Resources */,
-				A1B2C3D4E5F60008 /* dark_background.jpg in Resources */,
-				A1B2C3D4E5F60009 /* title.png in Resources */,
-				A1B2C3D4E5F6000A /* whiteTitle.png in Resources */,
-				A1B2C3D4E5F6000B /* cardBack.png in Resources */,
-				A1B2C3D4E5F6000C /* 0.png in Resources */,
-				A1B2C3D4E5F6000D /* 1.png in Resources */,
-				A1B2C3D4E5F6000E /* 2.png in Resources */,
-				A1B2C3D4E5F6000F /* 3.png in Resources */,
-				A1B2C3D4E5F60100 /* 4.png in Resources */,
-				A1B2C3D4E5F60101 /* 5.png in Resources */,
-				A1B2C3D4E5F60102 /* 6.png in Resources */,
-				A1B2C3D4E5F60103 /* 7.png in Resources */,
-				A1B2C3D4E5F60104 /* 8.png in Resources */,
-				A1B2C3D4E5F60105 /* 9.png in Resources */,
-				A1B2C3D4E5F60106 /* 10.png in Resources */,
-				A1B2C3D4E5F60107 /* 11.png in Resources */,
-				A1B2C3D4E5F60108 /* 12.png in Resources */,
-				A1B2C3D4E5F60109 /* splash_screen.png in Resources */,
+				A1B2C3D4E5F60007 /* Images/oak_background.jpg in Resources */,
+				A1B2C3D4E5F60008 /* Images/dark_background.jpg in Resources */,
+				A1B2C3D4E5F60009 /* Images/title.png in Resources */,
+				A1B2C3D4E5F6000A /* Images/whiteTitle.png in Resources */,
+				A1B2C3D4E5F6000B /* Images/cardBack.png in Resources */,
+				A1B2C3D4E5F6000C /* Images/cards/0.png in Resources */,
+				A1B2C3D4E5F6000D /* Images/cards/1.png in Resources */,
+				A1B2C3D4E5F6000E /* Images/cards/2.png in Resources */,
+				A1B2C3D4E5F6000F /* Images/cards/3.png in Resources */,
+				A1B2C3D4E5F60100 /* Images/cards/4.png in Resources */,
+				A1B2C3D4E5F60101 /* Images/cards/5.png in Resources */,
+				A1B2C3D4E5F60102 /* Images/cards/6.png in Resources */,
+				A1B2C3D4E5F60103 /* Images/cards/7.png in Resources */,
+				A1B2C3D4E5F60104 /* Images/cards/8.png in Resources */,
+				A1B2C3D4E5F60105 /* Images/cards/9.png in Resources */,
+				A1B2C3D4E5F60106 /* Images/cards/10.png in Resources */,
+				A1B2C3D4E5F60107 /* Images/cards/11.png in Resources */,
+				A1B2C3D4E5F60108 /* Images/cards/12.png in Resources */,
+				A1B2C3D4E5F60109 /* Images/splash_screen.png in Resources */,
 				A1B2C3D4E5F6010A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,8 +261,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-
 
 /* Begin XCBuildConfiguration section */
 		A1B2C3D4E5F60062 /* Debug */ = {
@@ -391,21 +389,23 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JKQ7XB528R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Ripple/Info.plist;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Ripple;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ripple.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tb.ripple.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -420,21 +420,23 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JKQ7XB528R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Ripple/Info.plist;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Ripple;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ripple.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tb.ripple.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
