@@ -41,6 +41,7 @@
 		A1B2C3D4E5F60107 /* 11.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002A /* 11.png */; };
 		A1B2C3D4E5F60108 /* 12.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002B /* 12.png */; };
 		A1B2C3D4E5F60109 /* splash_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002C /* splash_screen.png */; };
+		A1B2C3D4E5F6010A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +80,7 @@
 		A1B2C3D4E5F6002A /* 11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/11.png"; sourceTree = "<group>"; };
 		A1B2C3D4E5F6002B /* 12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/cards/12.png"; sourceTree = "<group>"; };
 		A1B2C3D4E5F6002C /* splash_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Images/splash_screen.png"; sourceTree = "<group>"; };
+		A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A1B2C3D4E5F60020 /* Ripple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ripple.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -139,6 +141,7 @@
 				A1B2C3D4E5F6002A /* 11.png */,
 				A1B2C3D4E5F6002B /* 12.png */,
 				A1B2C3D4E5F6002C /* splash_screen.png */,
+				A1B2C3D4E5F6002D /* PrivacyInfo.xcprivacy */,
 			);
 			path = Ripple;
 			sourceTree = "<group>";
@@ -229,6 +232,7 @@
 				A1B2C3D4E5F60107 /* 11.png in Resources */,
 				A1B2C3D4E5F60108 /* 12.png in Resources */,
 				A1B2C3D4E5F60109 /* splash_screen.png in Resources */,
+				A1B2C3D4E5F6010A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +394,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Ripple/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ripple;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -417,6 +423,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Ripple/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ripple;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
