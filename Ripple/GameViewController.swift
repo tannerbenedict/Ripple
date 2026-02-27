@@ -353,12 +353,7 @@ class GameViewController: UIViewController {
         // Build the results message
         let triggerPlayer = game.players[triggerIndex]
         var message = "\(triggerPlayer.name) revealed all their cards!\n\n"
-        message += "Round Scores:\n"
-        for (i, player) in game.players.enumerated() {
-            let roundScore = game.score(for: player)
-            message += "\(player.name): \(roundScore)\n"
-        }
-        message += "\nTotal Scores:\n"
+        message += "Scores:\n"
         var totals: [(name: String, total: Int)] = []
         for (i, player) in game.players.enumerated() {
             totals.append((name: player.name, total: game.totalScores[i]))
@@ -946,13 +941,8 @@ class GameViewController: UIViewController {
                     self.updateDiscardPileView()
                     self.discardPileView.alpha = 1.0
 
-                    if self.game.isFirstTurn {
-                        self.game.firstPlayerUsedBonusDraw = true
-                        self.aiBonusDraw(playerIndex: playerIndex)
-                    } else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            self.advanceTurn()
-                        }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.advanceTurn()
                     }
                 }
             } else {
@@ -1038,13 +1028,8 @@ class GameViewController: UIViewController {
                     self.updateDiscardPileView()
                     self.discardPileView.alpha = 1.0
 
-                    if self.game.isFirstTurn {
-                        self.game.firstPlayerUsedBonusDraw = true
-                        self.aiBonusDraw(playerIndex: playerIndex)
-                    } else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                            self?.advanceTurn()
-                        }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                        self?.advanceTurn()
                     }
                 }
             }
