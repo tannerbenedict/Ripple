@@ -233,7 +233,7 @@ class GameViewController: UIViewController {
         drawnCardView.configure(with: card, faceUp: true)
         drawnCardView.isHidden = false
         drawnCardLabel.isHidden = false
-        drawnCardLabel.text = "Tap a card to replace"
+        drawnCardLabel.text = "Current"
         keepButton.isHidden = true  // replaced by tapping a card
         discardButton.isHidden = false
     }
@@ -411,6 +411,9 @@ class GameViewController: UIViewController {
         hideDrawnCard()
         pileContainer.isHidden = false
         awaitingCardPlacement = false
+        awaitingRipplePlacement = false
+        rippleCard = nil
+        rippleTargets = []
         inputLocked = false
         highlightCurrentPlayer()
         beginTurn()
@@ -426,6 +429,9 @@ class GameViewController: UIViewController {
         hideDrawnCard()
         pileContainer.isHidden = false
         awaitingCardPlacement = false
+        awaitingRipplePlacement = false
+        rippleCard = nil
+        rippleTargets = []
         inputLocked = false
         highlightCurrentPlayer()
         beginTurn()
@@ -440,6 +446,18 @@ class GameViewController: UIViewController {
 
     /// Whether we are waiting for the human to pick a card to replace.
     private var awaitingCardPlacement: Bool = false
+
+    /// Whether we are waiting for the human to pick a ripple target.
+    private var awaitingRipplePlacement: Bool = false
+
+    /// The revealed card available for ripple placement.
+    private var rippleCard: Card? = nil
+
+    /// The index the ripple card came from (to exclude from matching).
+    private var rippleFromIndex: Int = 0
+
+    /// Valid card indices the player can ripple to.
+    private var rippleTargets: [Int] = []
 
     // MARK: - Draw Pile Interaction
 
@@ -484,6 +502,24 @@ class GameViewController: UIViewController {
     }
 
     @objc private func discardDrawnCard() {
+        if awaitingRipplePlacement {
+            // Player chose to skip the ripple — discard the ripple card and end turn
+            awaitingRipplePlacement = false
+            clearHighlights()
+            if let card = rippleCard {
+                game.discard(card)
+                updateDiscardPileView()
+                discardPileView.alpha = 1.0
+            }
+            rippleCard = nil
+            rippleTargets = []
+            hideDrawnCard()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.advanceTurn()
+            }
+            return
+        }
+
         awaitingCardPlacement = false
         clearHighlights()
         game.discardDrawnCard()
@@ -529,18 +565,18 @@ class GameViewController: UIViewController {
                 self?.advanceTurn()
             }
         } else {
-            // Option 2: replaced a face-down card — check for ripple chain
-            performRippleChain(playerIndex: playerIndex, revealedCard: oldCard, fromIndex: index)
+            // Option 2: replaced a face-down card — offer ripple placement
+            offerRipplePlacement(playerIndex: playerIndex, revealedCard: oldCard, fromIndex: index)
         }
     }
 
-    /// Check if the revealed card matches any face-up card whose column partner
-    /// is face-down. If so, replace that partner and continue the chain.
-    private func performRippleChain(playerIndex: Int, revealedCard: Card, fromIndex: Int) {
+    /// Show the revealed card in the drawn-card area and highlight valid ripple targets.
+    /// If no targets exist, discard the card and end the turn.
+    private func offerRipplePlacement(playerIndex: Int, revealedCard: Card, fromIndex: Int) {
         let player = game.players[playerIndex]
 
-        // Find a face-up card that matches revealedCard where the column partner is face-down
-        var matchIndex: Int? = nil
+        // Find all valid ripple targets: face-up cards matching revealedCard whose column partner is face-down
+        var targets: [Int] = []
         for i in 0..<player.cards.count {
             guard i != fromIndex else { continue }
             guard player.faceUp[i] else { continue }
@@ -548,29 +584,55 @@ class GameViewController: UIViewController {
 
             let partner = player.partnerIndex(of: i)
             if !player.faceUp[partner] {
-                matchIndex = partner
-                break
+                targets.append(partner)
             }
         }
 
-        if let target = matchIndex {
-            // Ripple! Replace the face-down partner with the revealed card
-            let nextOldCard = player.replaceCard(at: target, with: revealedCard)
-            playerCardViews[playerIndex][target].configure(with: revealedCard, faceUp: true)
-
-            // Animate with a short delay, then continue the chain
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.performRippleChain(playerIndex: playerIndex, revealedCard: nextOldCard, fromIndex: target)
-            }
-        } else {
-            // No more ripple — discard the last revealed card and end turn
+        if targets.isEmpty {
+            // No ripple possible — discard and end turn
             game.discard(revealedCard)
             updateDiscardPileView()
             discardPileView.alpha = 1.0
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
                 self?.advanceTurn()
             }
+        } else {
+            // Show the revealed card in the drawn-card area
+            showDrawnCard(revealedCard)
+            drawnCardLabel.text = "Ripple! Tap a target"
+
+            // Store ripple state
+            rippleCard = revealedCard
+            rippleFromIndex = fromIndex
+            rippleTargets = targets
+            awaitingRipplePlacement = true
+
+            // Highlight only the valid ripple target cards
+            let views = playerCardViews[playerIndex]
+            for i in targets {
+                views[i].setHighlighted(true)
+            }
         }
+    }
+
+    /// Human tapped a ripple target card.
+    private func handleRipplePlacement(at index: Int) {
+        let playerIndex = game.currentPlayerIndex
+        let player = game.players[playerIndex]
+        guard let card = rippleCard else { return }
+
+        clearHighlights()
+        awaitingRipplePlacement = false
+
+        let oldCard = player.replaceCard(at: index, with: card)
+        playerCardViews[playerIndex][index].configure(with: card, faceUp: true)
+        hideDrawnCard()
+
+        rippleCard = nil
+        rippleTargets = []
+
+        // Offer next ripple with the newly revealed card
+        offerRipplePlacement(playerIndex: playerIndex, revealedCard: oldCard, fromIndex: index)
     }
 
     // MARK: - AI Main Turn
@@ -993,6 +1055,10 @@ class GameViewController: UIViewController {
             } else {
                 highlightEligibleCards()
             }
+        } else if awaitingRipplePlacement {
+            // Ripple phase — player is placing the ripple card
+            guard rippleTargets.contains(index) else { return }
+            handleRipplePlacement(at: index)
         } else if awaitingCardPlacement {
             // Main phase — player is placing the drawn card
             handleCardPlacement(at: index)
