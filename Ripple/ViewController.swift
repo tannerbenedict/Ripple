@@ -219,7 +219,18 @@ class ViewController: UIViewController {
     }
 
     private func updateBackgroundImage() {
-        backgroundImageView.image = UIImage(named: "oak_background")
+        // Try multiple loading approaches for the background image
+        if let img = UIImage(named: "oak_background") {
+            backgroundImageView.image = img
+        } else if let img = UIImage(named: "oak_background.jpg") {
+            backgroundImageView.image = img
+        } else if let path = Bundle.main.path(forResource: "oak_background", ofType: "jpg"),
+                  let img = UIImage(contentsOfFile: path) {
+            backgroundImageView.image = img
+        } else {
+            // Fallback: brown color so it's obvious the image is missing
+            backgroundImageView.backgroundColor = .brown
+        }
         let isDark = traitCollection.userInterfaceStyle == .dark
         titleImageView.image = UIImage(named: isDark ? "whiteTitle" : "title")
     }
