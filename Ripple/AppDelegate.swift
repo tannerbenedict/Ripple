@@ -27,4 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
     }
+
+    // MARK: Orientation Lock
+
+    func application(_ application: UIApplication,
+                     supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return .landscape
+    }
 }
