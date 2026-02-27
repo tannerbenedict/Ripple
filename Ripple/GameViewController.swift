@@ -775,7 +775,7 @@ class GameViewController: UIViewController {
         case 2:  return ([0], [opps[0]], [], [opps[1]])
         case 3:  return ([0], [opps[0]], [opps[1]], [opps[2]])
         case 4:  return ([0], [opps[0]], [opps[1], opps[2]], [opps[3]])
-        case 5:  return ([0], [opps[0], opps[1]], [opps[2]], [opps[3], opps[4]])
+        case 5:  return ([0], [opps[1], opps[0]], [opps[2]], [opps[3], opps[4]])
         default: return ([0], [], opps, [])
         }
     }
