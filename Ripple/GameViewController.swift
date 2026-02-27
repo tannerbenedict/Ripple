@@ -57,14 +57,14 @@ class GameViewController: UIViewController {
 
     private let backgroundImageView: UIImageView = {
         let iv = UIImageView()
-        iv.contentMode = .scaleAspectFill
+        iv.contentMode = .scaleToFill
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.clipsToBounds = true
         return iv
     }()
 
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .black
         title = "Ripple"
 
         // Background image (light = oak, dark = dark)
@@ -926,8 +926,16 @@ class GameViewController: UIViewController {
     }
 
     private func updateBackgroundImage() {
-        let name = traitCollection.userInterfaceStyle == .dark ? "dark_background" : "oak_background"
-        backgroundImageView.image = UIImage(named: name)
+        if let img = UIImage(named: "oak_background") {
+            backgroundImageView.image = img
+        } else if let img = UIImage(named: "oak_background.jpg") {
+            backgroundImageView.image = img
+        } else if let path = Bundle.main.path(forResource: "oak_background", ofType: "jpg"),
+                  let img = UIImage(contentsOfFile: path) {
+            backgroundImageView.image = img
+        } else {
+            backgroundImageView.backgroundColor = .brown
+        }
     }
 
     @objc private func quitTapped() {
