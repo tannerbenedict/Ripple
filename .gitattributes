@@ -1,0 +1,6 @@
+# Force LF line endings for Xcode files
+*.storyboard text eol=lf
+*.xib text eol=lf
+*.pbxproj text eol=lf
+*.plist text eol=lf
+*.xcscheme text eol=lf
