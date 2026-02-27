@@ -1501,7 +1501,7 @@ class GameViewController: UIViewController {
         // LEFT (opponents on left edge, stacked vertically)
         if hasLeft {
             let leftTotalH = sideSz.boardH * CGFloat(edges.left.count) + 10 * CGFloat(max(edges.left.count - 1, 0))
-            let leftX = safe.left + sideZoneW / 2
+            let leftX = safe.left + 10 + sideZoneW / 2
             var leftY = (screenH - leftTotalH) / 2 + sideSz.boardH / 2
             for playerIdx in edges.left {
                 let board = makeBoard(playerIndex: playerIdx, cw: sideSz.cardW, ch: sideSz.cardH, bw: sideSz.boardW, bh: sideSz.boardH)
@@ -1515,7 +1515,7 @@ class GameViewController: UIViewController {
         // RIGHT (opponents on right edge, stacked vertically)
         if hasRight {
             let rightTotalH = sideSz.boardH * CGFloat(edges.right.count) + 10 * CGFloat(max(edges.right.count - 1, 0))
-            let rightX = screenW - safe.right - sideZoneW / 2
+            let rightX = screenW - safe.right - 10 - sideZoneW / 2
             var rightY = (screenH - rightTotalH) / 2 + sideSz.boardH / 2
             for playerIdx in edges.right {
                 let board = makeBoard(playerIndex: playerIdx, cw: sideSz.cardW, ch: sideSz.cardH, bw: sideSz.boardW, bh: sideSz.boardH)
