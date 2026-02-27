@@ -15,8 +15,8 @@ class GameViewController: UIViewController {
     private var playerCardViews: [[CardView]] = []   // one array of 10 CardViews per player
     private var playerIconViews: [UIImageView] = []  // icon view per player for highlighting
     private var playerScoreLabels: [UILabel] = []    // cumulative score label per player
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
+    private let topContainer = UIView()      // opponent boards
+    private let bottomContainer = UIView()   // human player board
 
     // Draw / discard pile views
     private let drawPileView = CardView()
@@ -67,7 +67,7 @@ class GameViewController: UIViewController {
         view.backgroundColor = .black
         title = "Ripple"
 
-        // Background image (light = oak, dark = dark)
+        // Background image
         view.addSubview(backgroundImageView)
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -84,142 +84,145 @@ class GameViewController: UIViewController {
             action: #selector(quitTapped)
         )
 
-        // Pile container (position set early so scroll view can reference it)
+        // Three-zone layout: opponents (top) | piles (middle) | human (bottom)
+        topContainer.translatesAutoresizingMaskIntoConstraints = false
+        topContainer.backgroundColor = .clear
+        view.addSubview(topContainer)
+
         pileContainer.translatesAutoresizingMaskIntoConstraints = false
         pileContainer.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.85)
-        pileContainer.layer.cornerRadius = 12
+        pileContainer.layer.cornerRadius = 10
         view.addSubview(pileContainer)
 
-        // Scroll view for all player boards
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        scrollView.backgroundColor = .clear
-        contentView.backgroundColor = .clear
+        bottomContainer.translatesAutoresizingMaskIntoConstraints = false
+        bottomContainer.backgroundColor = .clear
+        view.addSubview(bottomContainer)
 
-        let pileHeight = pileContainer.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.32)
-        pileHeight.priority = .defaultHigh
         NSLayoutConstraint.activate([
-            pileContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
-            pileContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
-            pileContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
-            pileHeight,
-            pileContainer.heightAnchor.constraint(greaterThanOrEqualToConstant: 100),
-            pileContainer.heightAnchor.constraint(lessThanOrEqualToConstant: 160),
+            topContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            topContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: pileContainer.topAnchor, constant: -4),
+            pileContainer.topAnchor.constraint(equalTo: topContainer.bottomAnchor, constant: 4),
+            pileContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pileContainer.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.6),
+            pileContainer.heightAnchor.constraint(equalToConstant: 60),
 
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            bottomContainer.topAnchor.constraint(equalTo: pileContainer.bottomAnchor, constant: 4),
+            bottomContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
+
+        // Split remaining vertical space: opponents get opponentCount shares, human gets 1 share
+        if opponentCount > 0 {
+            topContainer.heightAnchor.constraint(
+                equalTo: bottomContainer.heightAnchor,
+                multiplier: CGFloat(opponentCount)
+            ).isActive = true
+        } else {
+            topContainer.heightAnchor.constraint(equalToConstant: 0).isActive = true
+        }
 
         setupPileUI()
     }
 
     private func setupPileUI() {
-        // pileContainer already configured and added to view in setupUI()
-
-        // Draw pile
+        // Compact horizontal layout: [Draw] [Discard] [DrawnCard] [Discard Button]
         drawPileView.translatesAutoresizingMaskIntoConstraints = false
         drawPileView.configure(with: .number(0), faceUp: false)
         drawPileView.onTap = { [weak self] in self?.drawPileTapped() }
         pileContainer.addSubview(drawPileView)
 
         drawPileLabel.text = "Draw"
-        drawPileLabel.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        drawPileLabel.font = UIFont.systemFont(ofSize: 10, weight: .medium)
         drawPileLabel.textColor = .secondaryLabel
         drawPileLabel.textAlignment = .center
         drawPileLabel.translatesAutoresizingMaskIntoConstraints = false
         pileContainer.addSubview(drawPileLabel)
 
-        // Discard pile
         discardPileView.translatesAutoresizingMaskIntoConstraints = false
         discardPileView.onTap = { [weak self] in self?.discardPileTapped() }
         updateDiscardPileView()
         pileContainer.addSubview(discardPileView)
 
         discardPileLabel.text = "Discard"
-        discardPileLabel.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        discardPileLabel.font = UIFont.systemFont(ofSize: 10, weight: .medium)
         discardPileLabel.textColor = .secondaryLabel
         discardPileLabel.textAlignment = .center
         discardPileLabel.translatesAutoresizingMaskIntoConstraints = false
         pileContainer.addSubview(discardPileLabel)
 
-        // Drawn card preview area
         drawnCardView.translatesAutoresizingMaskIntoConstraints = false
         drawnCardView.isHidden = true
         pileContainer.addSubview(drawnCardView)
 
         drawnCardLabel.text = "Your draw"
-        drawnCardLabel.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        drawnCardLabel.font = UIFont.systemFont(ofSize: 10, weight: .medium)
         drawnCardLabel.textColor = .secondaryLabel
         drawnCardLabel.textAlignment = .center
         drawnCardLabel.translatesAutoresizingMaskIntoConstraints = false
         drawnCardLabel.isHidden = true
         pileContainer.addSubview(drawnCardLabel)
 
-        // Keep / Discard buttons
         keepButton.setTitle("Keep", for: .normal)
-        keepButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        keepButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         keepButton.backgroundColor = .systemGreen
         keepButton.setTitleColor(.white, for: .normal)
-        keepButton.layer.cornerRadius = 8
+        keepButton.layer.cornerRadius = 6
         keepButton.translatesAutoresizingMaskIntoConstraints = false
         keepButton.isHidden = true
         keepButton.addTarget(self, action: #selector(keepDrawnCard), for: .touchUpInside)
         pileContainer.addSubview(keepButton)
 
         discardButton.setTitle("Discard", for: .normal)
-        discardButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        discardButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         discardButton.backgroundColor = .systemRed
         discardButton.setTitleColor(.white, for: .normal)
-        discardButton.layer.cornerRadius = 8
+        discardButton.layer.cornerRadius = 6
         discardButton.translatesAutoresizingMaskIntoConstraints = false
         discardButton.isHidden = true
         discardButton.addTarget(self, action: #selector(discardDrawnCard), for: .touchUpInside)
         pileContainer.addSubview(discardButton)
 
+        let pileCardH: CGFloat = 40
+        let pileCardW: CGFloat = 28
+
         NSLayoutConstraint.activate([
             drawPileView.leadingAnchor.constraint(equalTo: pileContainer.leadingAnchor, constant: 12),
-            drawPileView.centerYAnchor.constraint(equalTo: pileContainer.centerYAnchor, constant: -8),
-            drawPileView.heightAnchor.constraint(equalTo: pileContainer.heightAnchor, multiplier: 0.55),
-            drawPileView.widthAnchor.constraint(equalTo: drawPileView.heightAnchor, multiplier: 0.7),
+            drawPileView.centerYAnchor.constraint(equalTo: pileContainer.centerYAnchor, constant: -6),
+            drawPileView.widthAnchor.constraint(equalToConstant: pileCardW),
+            drawPileView.heightAnchor.constraint(equalToConstant: pileCardH),
 
-            drawPileLabel.topAnchor.constraint(equalTo: drawPileView.bottomAnchor, constant: 2),
+            drawPileLabel.topAnchor.constraint(equalTo: drawPileView.bottomAnchor, constant: 1),
             drawPileLabel.centerXAnchor.constraint(equalTo: drawPileView.centerXAnchor),
 
-            discardPileView.leadingAnchor.constraint(equalTo: drawPileView.trailingAnchor, constant: 12),
+            discardPileView.leadingAnchor.constraint(equalTo: drawPileView.trailingAnchor, constant: 10),
             discardPileView.centerYAnchor.constraint(equalTo: drawPileView.centerYAnchor),
-            discardPileView.widthAnchor.constraint(equalTo: drawPileView.widthAnchor),
-            discardPileView.heightAnchor.constraint(equalTo: drawPileView.heightAnchor),
+            discardPileView.widthAnchor.constraint(equalToConstant: pileCardW),
+            discardPileView.heightAnchor.constraint(equalToConstant: pileCardH),
 
-            discardPileLabel.topAnchor.constraint(equalTo: discardPileView.bottomAnchor, constant: 2),
+            discardPileLabel.topAnchor.constraint(equalTo: discardPileView.bottomAnchor, constant: 1),
             discardPileLabel.centerXAnchor.constraint(equalTo: discardPileView.centerXAnchor),
 
-            drawnCardView.leadingAnchor.constraint(equalTo: discardPileView.trailingAnchor, constant: 20),
+            drawnCardView.leadingAnchor.constraint(equalTo: discardPileView.trailingAnchor, constant: 16),
             drawnCardView.centerYAnchor.constraint(equalTo: drawPileView.centerYAnchor),
-            drawnCardView.widthAnchor.constraint(equalTo: drawPileView.widthAnchor),
-            drawnCardView.heightAnchor.constraint(equalTo: drawPileView.heightAnchor),
+            drawnCardView.widthAnchor.constraint(equalToConstant: pileCardW),
+            drawnCardView.heightAnchor.constraint(equalToConstant: pileCardH),
 
-            drawnCardLabel.topAnchor.constraint(equalTo: drawnCardView.bottomAnchor, constant: 2),
+            drawnCardLabel.topAnchor.constraint(equalTo: drawnCardView.bottomAnchor, constant: 1),
             drawnCardLabel.centerXAnchor.constraint(equalTo: drawnCardView.centerXAnchor),
 
-            keepButton.leadingAnchor.constraint(equalTo: drawnCardView.trailingAnchor, constant: 12),
-            keepButton.topAnchor.constraint(equalTo: pileContainer.topAnchor, constant: 12),
-            keepButton.widthAnchor.constraint(equalToConstant: 80),
-            keepButton.heightAnchor.constraint(equalToConstant: 34),
+            discardButton.leadingAnchor.constraint(equalTo: drawnCardView.trailingAnchor, constant: 12),
+            discardButton.centerYAnchor.constraint(equalTo: pileContainer.centerYAnchor),
+            discardButton.widthAnchor.constraint(equalToConstant: 70),
+            discardButton.heightAnchor.constraint(equalToConstant: 30),
+            discardButton.trailingAnchor.constraint(lessThanOrEqualTo: pileContainer.trailingAnchor, constant: -12),
 
-            discardButton.leadingAnchor.constraint(equalTo: keepButton.leadingAnchor),
-            discardButton.topAnchor.constraint(equalTo: keepButton.bottomAnchor, constant: 6),
-            discardButton.widthAnchor.constraint(equalTo: keepButton.widthAnchor),
-            discardButton.heightAnchor.constraint(equalTo: keepButton.heightAnchor),
+            keepButton.leadingAnchor.constraint(equalTo: discardButton.leadingAnchor),
+            keepButton.centerYAnchor.constraint(equalTo: pileContainer.centerYAnchor),
+            keepButton.widthAnchor.constraint(equalTo: discardButton.widthAnchor),
+            keepButton.heightAnchor.constraint(equalTo: discardButton.heightAnchor),
         ])
 
         pileContainer.isHidden = true  // Hidden during initial flip phase
@@ -773,113 +776,185 @@ class GameViewController: UIViewController {
     }
 
     private func buildPlayerBoards() {
-        // Remove any existing card views
-        contentView.subviews.forEach { $0.removeFromSuperview() }
+        // Remove any existing subviews from containers
+        topContainer.subviews.forEach { $0.removeFromSuperview() }
+        bottomContainer.subviews.forEach { $0.removeFromSuperview() }
         playerCardViews.removeAll()
         playerIconViews.removeAll()
         playerScoreLabels.removeAll()
 
-        let sidePadding: CGFloat = 20
-        let cardSpacing: CGFloat = 8
-        let availableWidth = view.bounds.width - 2 * sidePadding
-        let cardWidth = floor((availableWidth - 4 * cardSpacing) / 5)
-        let cardHeight = floor(cardWidth * 80.0 / 56.0)
-        let sectionSpacing: CGFloat = max(16, view.bounds.height * 0.04)
+        // Calculate card sizes to fit on screen
+        // Each player section = headerHeight + 2*cardHeight + cardSpacing
+        // Available height is split proportionally between containers
+        let safeHeight = view.safeAreaLayoutGuide.layoutFrame.height > 0
+            ? view.safeAreaLayoutGuide.layoutFrame.height
+            : view.bounds.height - 80  // estimate if not laid out yet
+        let pileH: CGFloat = 60
+        let spacing: CGFloat = 8  // vertical spacing between sections
+        let totalPlayers = opponentCount + 1
+        let availableHeight = safeHeight - pileH - spacing * 2
 
-        var currentY: CGFloat = 20
+        // Each player gets: headerRow + 2 card rows + inner spacing
+        let headerHeight: CGFloat = 18
+        let innerCardSpacing: CGFloat = 3
+        let perPlayerHeight = availableHeight / CGFloat(totalPlayers)
+        let cardRowsHeight = perPlayerHeight - headerHeight - innerCardSpacing - 4 // 4pt padding
+        let cardHeight = floor(max(cardRowsHeight / 2, 20))
+        let cardWidth = floor(cardHeight * 56.0 / 80.0)
 
-        for (playerIndex, player) in game.players.enumerated() {
-            // Player icon
-            let iconView = UIImageView()
-            let iconConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
-            iconView.image = UIImage(systemName: player.icon, withConfiguration: iconConfig)
-            iconView.tintColor = .systemBlue
-            iconView.contentMode = .scaleAspectFit
-            iconView.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview(iconView)
+        // Also limit card width so 5 cards fit horizontally
+        let sidePadding: CGFloat = 16
+        let hCardSpacing: CGFloat = 4
+        let maxCardWidth = floor((view.bounds.width - 2 * sidePadding - 4 * hCardSpacing) / 5)
+        let finalCardW = min(cardWidth, maxCardWidth)
+        let finalCardH = floor(finalCardW * 80.0 / 56.0)
 
-            playerIconViews.append(iconView)
+        // Reorder players: opponents first (indices 1..N), then human (index 0) at bottom
+        // But keep arrays indexed by game player index
+        // We'll place players 1..N in topContainer, player 0 in bottomContainer
 
-            // Player name label
-            let nameLabel = UILabel()
-            nameLabel.text = player.name
-            nameLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-            nameLabel.textColor = .label
-            nameLabel.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview(nameLabel)
+        // Initialize arrays with placeholders
+        playerCardViews = Array(repeating: [], count: game.players.count)
+        playerIconViews = Array(repeating: UIImageView(), count: game.players.count)
+        playerScoreLabels = Array(repeating: UILabel(), count: game.players.count)
 
-            // Score label
-            let scoreLabel = UILabel()
-            let totalIdx = playerIndex < game.totalScores.count ? game.totalScores[playerIndex] : 0
-            scoreLabel.text = "Score: \(totalIdx)"
-            scoreLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-            scoreLabel.textColor = .secondaryLabel
-            scoreLabel.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview(scoreLabel)
-            playerScoreLabels.append(scoreLabel)
-
-            NSLayoutConstraint.activate([
-                iconView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: currentY),
-                iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: sidePadding),
-                iconView.widthAnchor.constraint(equalToConstant: 26),
-                iconView.heightAnchor.constraint(equalToConstant: 26),
-
-                nameLabel.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
-                nameLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 8),
-
-                scoreLabel.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
-                scoreLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -sidePadding),
-            ])
-
-            currentY += 34
-
-            // Build 2 rows × 5 columns of cards
-            var cardViewsForPlayer: [CardView] = []
-
-            for row in 0..<2 {
-                for col in 0..<5 {
-                    let cardIndex = row * 5 + col
-                    let card = player.cards[cardIndex]
-                    let isFaceUp = player.faceUp[cardIndex]
-
-                    let cardView = CardView()
-                    cardView.translatesAutoresizingMaskIntoConstraints = false
-                    cardView.configure(with: card, faceUp: isFaceUp)
-                    contentView.addSubview(cardView)
-
-                    let xOffset = sidePadding + CGFloat(col) * (cardWidth + cardSpacing)
-                    let yOffset = currentY + CGFloat(row) * (cardHeight + cardSpacing)
-
-                    NSLayoutConstraint.activate([
-                        cardView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: yOffset),
-                        cardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: xOffset),
-                        cardView.widthAnchor.constraint(equalToConstant: cardWidth),
-                        cardView.heightAnchor.constraint(equalToConstant: cardHeight),
-                    ])
-
-                    // All cards get a tap handler; logic in humanCardTapped
-                    // gates by whose turn it is
-                    let pIdx = playerIndex
-                    let idx = cardIndex
-                    cardView.onTap = { [weak self] in
-                        guard let self = self else { return }
-                        guard self.game.currentPlayerIndex == pIdx else { return }
-                        self.humanCardTapped(at: idx)
-                    }
-
-                    cardViewsForPlayer.append(cardView)
-                }
-            }
-
-            playerCardViews.append(cardViewsForPlayer)
-            currentY += 2 * cardHeight + cardSpacing + sectionSpacing
+        // Build opponent boards in topContainer
+        var opponentY: CGFloat = 2
+        for playerIndex in 1..<game.players.count {
+            let player = game.players[playerIndex]
+            opponentY = addPlayerBoard(
+                player: player,
+                playerIndex: playerIndex,
+                to: topContainer,
+                startY: opponentY,
+                cardW: finalCardW,
+                cardH: finalCardH,
+                hSpacing: hCardSpacing,
+                vSpacing: innerCardSpacing,
+                sidePadding: sidePadding,
+                headerHeight: headerHeight
+            )
+            opponentY += 4 // gap between opponents
         }
 
-        // Set content size
-        let bottomConstraint = contentView.heightAnchor.constraint(equalToConstant: currentY)
-        bottomConstraint.priority = .defaultLow
-        bottomConstraint.isActive = true
-        contentView.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: currentY).isActive = true
+        // Build human board in bottomContainer
+        addPlayerBoard(
+            player: game.players[0],
+            playerIndex: 0,
+            to: bottomContainer,
+            startY: 2,
+            cardW: finalCardW,
+            cardH: finalCardH,
+            hSpacing: hCardSpacing,
+            vSpacing: innerCardSpacing,
+            sidePadding: sidePadding,
+            headerHeight: headerHeight
+        )
+    }
+
+    /// Adds a player's header + 2×5 card grid to the given container.
+    /// Returns the Y position after the last card row.
+    @discardableResult
+    private func addPlayerBoard(
+        player: Player,
+        playerIndex: Int,
+        to container: UIView,
+        startY: CGFloat,
+        cardW: CGFloat,
+        cardH: CGFloat,
+        hSpacing: CGFloat,
+        vSpacing: CGFloat,
+        sidePadding: CGFloat,
+        headerHeight: CGFloat
+    ) -> CGFloat {
+        var currentY = startY
+
+        // Center the card grid horizontally
+        let gridWidth = 5 * cardW + 4 * hSpacing
+        let gridLeading = (view.bounds.width - gridWidth) / 2
+
+        // Player icon
+        let iconView = UIImageView()
+        let iconConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        iconView.image = UIImage(systemName: player.icon, withConfiguration: iconConfig)
+        iconView.tintColor = .systemBlue
+        iconView.contentMode = .scaleAspectFit
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(iconView)
+        playerIconViews[playerIndex] = iconView
+
+        // Player name
+        let nameLabel = UILabel()
+        nameLabel.text = player.name
+        nameLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+        nameLabel.textColor = .white
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(nameLabel)
+
+        // Score label
+        let scoreLabel = UILabel()
+        let totalScore = playerIndex < game.totalScores.count ? game.totalScores[playerIndex] : 0
+        scoreLabel.text = "Score: \(totalScore)"
+        scoreLabel.font = UIFont.systemFont(ofSize: 11, weight: .regular)
+        scoreLabel.textColor = .lightGray
+        scoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(scoreLabel)
+        playerScoreLabels[playerIndex] = scoreLabel
+
+        NSLayoutConstraint.activate([
+            iconView.topAnchor.constraint(equalTo: container.topAnchor, constant: currentY),
+            iconView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: gridLeading),
+            iconView.widthAnchor.constraint(equalToConstant: 18),
+            iconView.heightAnchor.constraint(equalToConstant: 18),
+
+            nameLabel.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 4),
+
+            scoreLabel.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
+            scoreLabel.trailingAnchor.constraint(equalTo: container.leadingAnchor, constant: gridLeading + gridWidth),
+        ])
+
+        currentY += headerHeight
+
+        // Build 2 rows × 5 columns of cards
+        var cardViewsForPlayer: [CardView] = []
+
+        for row in 0..<2 {
+            for col in 0..<5 {
+                let cardIndex = row * 5 + col
+                let card = player.cards[cardIndex]
+                let isFaceUp = player.faceUp[cardIndex]
+
+                let cardView = CardView()
+                cardView.translatesAutoresizingMaskIntoConstraints = false
+                cardView.configure(with: card, faceUp: isFaceUp)
+                container.addSubview(cardView)
+
+                let xOffset = gridLeading + CGFloat(col) * (cardW + hSpacing)
+                let yOffset = currentY + CGFloat(row) * (cardH + vSpacing)
+
+                NSLayoutConstraint.activate([
+                    cardView.topAnchor.constraint(equalTo: container.topAnchor, constant: yOffset),
+                    cardView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: xOffset),
+                    cardView.widthAnchor.constraint(equalToConstant: cardW),
+                    cardView.heightAnchor.constraint(equalToConstant: cardH),
+                ])
+
+                let pIdx = playerIndex
+                let idx = cardIndex
+                cardView.onTap = { [weak self] in
+                    guard let self = self else { return }
+                    guard self.game.currentPlayerIndex == pIdx else { return }
+                    self.humanCardTapped(at: idx)
+                }
+
+                cardViewsForPlayer.append(cardView)
+            }
+        }
+
+        playerCardViews[playerIndex] = cardViewsForPlayer
+        currentY += 2 * cardH + vSpacing
+        return currentY
     }
 
     // MARK: - Interaction
